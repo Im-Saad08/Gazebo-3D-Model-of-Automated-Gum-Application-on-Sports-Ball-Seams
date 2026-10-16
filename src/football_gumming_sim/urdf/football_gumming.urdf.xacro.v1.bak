@@ -1,0 +1,282 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="football_gumming_machine">
+  <material name="frame_gray"><color rgba="0.22 0.26 0.30 1"/></material>
+  <material name="rail_silver"><color rgba="0.65 0.68 0.72 1"/></material>
+  <material name="nozzle_orange"><color rgba="0.95 0.35 0.06 1"/></material>
+  <material name="football_white"><color rgba="0.92 0.92 0.88 1"/></material>
+  <material name="rubber_black"><color rgba="0.06 0.06 0.06 1"/></material>
+  <material name="cup_red"><color rgba="0.80 0.15 0.10 1"/></material>
+
+  <link name="base_link">
+    <inertial><mass value="30.0"/><inertia ixx="3.0" ixy="0" ixz="0" iyy="3.0" iyz="0" izz="3.0"/></inertial>
+    <visual><origin xyz="0 0 0.25"/><geometry><box size="1.2 0.9 0.10"/></geometry><material name="frame_gray"/></visual>
+    <collision><origin xyz="0 0 0.25"/><geometry><box size="1.2 0.9 0.10"/></geometry></collision>
+  </link>
+  <link name="left_front_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="left_front_post_mount" type="fixed">
+    <parent link="base_link"/><child link="left_front_post"/><origin xyz="-0.52 -0.37 0.95"/>
+  </joint>
+  <link name="left_back_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="left_back_post_mount" type="fixed">
+    <parent link="base_link"/><child link="left_back_post"/><origin xyz="-0.52 0.37 0.95"/>
+  </joint>
+  <link name="right_front_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="right_front_post_mount" type="fixed">
+    <parent link="base_link"/><child link="right_front_post"/><origin xyz="0.52 -0.37 0.95"/>
+  </joint>
+  <link name="right_back_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="right_back_post_mount" type="fixed">
+    <parent link="base_link"/><child link="right_back_post"/><origin xyz="0.52 0.37 0.95"/>
+  </joint>
+  <link name="top_front_beam">
+    <inertial><mass value="3.0"/><inertia ixx="0.002450" ixy="0" ixz="0" iyy="0.303725" iyz="0" izz="0.303725"/></inertial>
+    <visual><geometry><box size="1.1 0.07 0.07"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="1.1 0.07 0.07"/></geometry></collision>
+  </link>
+  <joint name="front_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_front_beam"/><origin xyz="0 -0.37 1.65"/>
+  </joint>
+  <link name="top_back_beam">
+    <inertial><mass value="3.0"/><inertia ixx="0.002450" ixy="0" ixz="0" iyy="0.303725" iyz="0" izz="0.303725"/></inertial>
+    <visual><geometry><box size="1.1 0.07 0.07"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="1.1 0.07 0.07"/></geometry></collision>
+  </link>
+  <joint name="back_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_back_beam"/><origin xyz="0 0.37 1.65"/>
+  </joint>
+  <link name="top_cross_beam">
+    <inertial><mass value="3.0"/><inertia ixx="0.138125" ixy="0" ixz="0" iyy="0.002450" iyz="0" izz="0.138125"/></inertial>
+    <visual><geometry><box size="0.07 0.74 0.07"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.74 0.07"/></geometry></collision>
+  </link>
+  <joint name="cross_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_cross_beam"/><origin xyz="0 0 1.65"/>
+  </joint>
+  <link name="nozzle_rail">
+    <inertial><mass value="1.0"/><inertia ixx="0.030133" ixy="0" ixz="0" iyy="0.030133" iyz="0" izz="0.000267"/></inertial>
+    <visual><geometry><box size="0.04 0.04 0.6"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="0.04 0.04 0.6"/></geometry></collision>
+  </link>
+  <joint name="rail_mount" type="fixed">
+    <parent link="base_link"/><child link="nozzle_rail"/><origin xyz="0 0 1.35"/>
+  </joint>
+  <link name="z_carriage">
+    <inertial><mass value="1.0"/><inertia ixx="0.002967" ixy="0" ixz="0" iyy="0.002967" iyz="0" izz="0.001667"/></inertial>
+    <visual><geometry><box size="0.1 0.1 0.16"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="0.1 0.1 0.16"/></geometry></collision>
+  </link>
+  <joint name="z_axis_joint" type="prismatic">
+    <parent link="nozzle_rail"/><child link="z_carriage"/>
+    <origin xyz="0 0 0.15"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.20" upper="0.10" effort="60" velocity="0.15"/>
+    <dynamics damping="4.0" friction="0.2"/>
+  </joint>
+  <link name="nozzle_body">
+    <inertial><mass value="0.5"/><inertia ixx="0.002604" ixy="0" ixz="0" iyy="0.002604" iyz="0" izz="0.000408"/></inertial>
+    <visual name="body"><geometry><box size="0.07 0.07 0.24"/></geometry><material name="nozzle_orange"/></visual>
+    <visual name="tip"><origin xyz="0 0 -0.145"/><geometry><box size="0.025 0.025 0.05"/></geometry><material name="rubber_black"/></visual>
+  </link>
+  <joint name="nozzle_mount" type="fixed">
+    <parent link="z_carriage"/><child link="nozzle_body"/><origin xyz="0 0 -0.18"/>
+  </joint>
+  <link name="pivot_pillar">
+    <inertial><mass value="2.0"/><inertia ixx="0.047417" ixy="0" ixz="0" iyy="0.047883" iyz="0" izz="0.001667"/></inertial>
+    <visual><geometry><box size="0.08 0.06 0.53"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.08 0.06 0.53"/></geometry></collision>
+  </link>
+  <joint name="pillar_mount" type="fixed">
+    <parent link="base_link"/><child link="pivot_pillar"/><origin xyz="0 0.40 0.565"/>
+  </joint>
+  <link name="tilt_link">
+    <inertial><mass value="6.0"/><inertia ixx="0.3" ixy="0" ixz="0" iyy="0.3" iyz="0" izz="0.3"/></inertial>
+    <visual name="plate_left"><origin xyz="-0.40 0.10 0"/><geometry><box size="0.03 0.40 0.30"/></geometry><material name="rail_silver"/></visual>
+    <visual name="plate_right"><origin xyz="0.40 0.10 0"/><geometry><box size="0.03 0.40 0.30"/></geometry><material name="rail_silver"/></visual>
+    <visual name="rear_bar"><origin xyz="0 0.28 0"/><geometry><box size="0.83 0.04 0.04"/></geometry><material name="rail_silver"/></visual>
+    <visual name="pivot_pin"><origin xyz="0 0.34 0" rpy="1.5708 0 0"/><geometry><cylinder radius="0.025" length="0.12"/></geometry><material name="rail_silver"/></visual>
+  </link>
+  <joint name="tilt_joint" type="revolute">
+    <parent link="base_link"/><child link="tilt_link"/>
+    <origin xyz="0 0 0.80"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.8" upper="0.8" effort="200" velocity="0.5"/>
+    <dynamics damping="2.0" friction="0.1"/>
+  </joint>
+  <link name="left_cup">
+    <inertial><mass value="0.8"/><inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.003"/></inertial>
+    <visual name="pad"><origin rpy="0 1.5708 0"/><geometry><cylinder radius="0.07" length="0.08"/></geometry><material name="cup_red"/></visual>
+    <visual name="shaft"><origin xyz="-0.09 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.02" length="0.10"/></geometry><material name="rail_silver"/></visual>
+    <visual name="marker"><origin xyz="0 0.07 0"/><geometry><box size="0.09 0.02 0.02"/></geometry><material name="football_white"/></visual>
+  </link>
+  <joint name="left_cup_joint" type="revolute">
+    <parent link="tilt_link"/><child link="left_cup"/>
+    <origin xyz="-0.25 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-12.6" upper="12.6" effort="50" velocity="1.5"/>
+    <dynamics damping="1.0" friction="0.05"/>
+  </joint>
+  <link name="right_cup">
+    <inertial><mass value="0.8"/><inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.003"/></inertial>
+    <visual name="pad"><origin rpy="0 1.5708 0"/><geometry><cylinder radius="0.07" length="0.08"/></geometry><material name="cup_red"/></visual>
+    <visual name="shaft"><origin xyz="0.09 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.02" length="0.10"/></geometry><material name="rail_silver"/></visual>
+    <visual name="marker"><origin xyz="0 0.07 0"/><geometry><box size="0.09 0.02 0.02"/></geometry><material name="football_white"/></visual>
+  </link>
+  <joint name="right_cup_joint" type="revolute">
+    <parent link="tilt_link"/><child link="right_cup"/>
+    <origin xyz="0.25 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-12.6" upper="12.6" effort="50" velocity="1.5"/>
+    <dynamics damping="1.0" friction="0.05"/>
+  </joint>
+  <link name="football">
+    <inertial><mass value="0.43"/><inertia ixx="0.008" ixy="0" ixz="0" iyy="0.008" iyz="0" izz="0.008"/></inertial>
+    <visual name="ball"><geometry><sphere radius="0.22"/></geometry><material name="football_white"/></visual>
+    <collision><geometry><sphere radius="0.22"/></geometry></collision>
+    <visual name="seam1_0"><origin xyz="0.0000 0.2215 0.0000"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_1"><origin xyz="0.0000 0.2203 0.0232"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_2"><origin xyz="0.0000 0.2167 0.0461"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_3"><origin xyz="0.0000 0.2107 0.0684"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_4"><origin xyz="0.0000 0.2024 0.0901"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_5"><origin xyz="0.0000 0.1918 0.1107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_6"><origin xyz="0.0000 0.1792 0.1302"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_7"><origin xyz="0.0000 0.1646 0.1482"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_8"><origin xyz="0.0000 0.1482 0.1646"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_9"><origin xyz="0.0000 0.1302 0.1792"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_10"><origin xyz="0.0000 0.1108 0.1918"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_11"><origin xyz="0.0000 0.0901 0.2024"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_12"><origin xyz="0.0000 0.0684 0.2107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_13"><origin xyz="0.0000 0.0461 0.2167"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_14"><origin xyz="0.0000 0.0232 0.2203"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_15"><origin xyz="0.0000 0.0000 0.2215"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_16"><origin xyz="0.0000 -0.0232 0.2203"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_17"><origin xyz="0.0000 -0.0461 0.2167"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_18"><origin xyz="0.0000 -0.0684 0.2107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_19"><origin xyz="0.0000 -0.0901 0.2024"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_20"><origin xyz="0.0000 -0.1107 0.1918"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_21"><origin xyz="0.0000 -0.1302 0.1792"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_22"><origin xyz="0.0000 -0.1482 0.1646"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_23"><origin xyz="0.0000 -0.1646 0.1482"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_24"><origin xyz="0.0000 -0.1792 0.1302"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_25"><origin xyz="0.0000 -0.1918 0.1107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_26"><origin xyz="0.0000 -0.2024 0.0901"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_27"><origin xyz="0.0000 -0.2107 0.0684"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_28"><origin xyz="0.0000 -0.2167 0.0461"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_29"><origin xyz="0.0000 -0.2203 0.0232"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_30"><origin xyz="0.0000 -0.2215 0.0000"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_31"><origin xyz="0.0000 -0.2203 -0.0232"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_32"><origin xyz="0.0000 -0.2167 -0.0461"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_33"><origin xyz="0.0000 -0.2107 -0.0684"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_34"><origin xyz="0.0000 -0.2024 -0.0901"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_35"><origin xyz="0.0000 -0.1918 -0.1107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_36"><origin xyz="0.0000 -0.1792 -0.1302"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_37"><origin xyz="0.0000 -0.1646 -0.1482"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_38"><origin xyz="0.0000 -0.1482 -0.1646"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_39"><origin xyz="0.0000 -0.1302 -0.1792"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_40"><origin xyz="0.0000 -0.1108 -0.1918"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_41"><origin xyz="0.0000 -0.0901 -0.2024"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_42"><origin xyz="0.0000 -0.0684 -0.2107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_43"><origin xyz="0.0000 -0.0461 -0.2167"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_44"><origin xyz="0.0000 -0.0232 -0.2203"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_45"><origin xyz="0.0000 -0.0000 -0.2215"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_46"><origin xyz="0.0000 0.0232 -0.2203"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_47"><origin xyz="0.0000 0.0461 -0.2167"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_48"><origin xyz="0.0000 0.0684 -0.2107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_49"><origin xyz="0.0000 0.0901 -0.2024"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_50"><origin xyz="0.0000 0.1108 -0.1918"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_51"><origin xyz="0.0000 0.1302 -0.1792"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_52"><origin xyz="0.0000 0.1482 -0.1646"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_53"><origin xyz="0.0000 0.1646 -0.1482"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_54"><origin xyz="0.0000 0.1792 -0.1302"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_55"><origin xyz="0.0000 0.1918 -0.1107"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_56"><origin xyz="0.0000 0.2024 -0.0901"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_57"><origin xyz="0.0000 0.2107 -0.0684"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_58"><origin xyz="0.0000 0.2167 -0.0461"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam1_59"><origin xyz="0.0000 0.2203 -0.0232"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_0"><origin xyz="-0.1062 0.1944 0.0000"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_1"><origin xyz="-0.1062 0.1931 0.0226"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_2"><origin xyz="-0.1062 0.1891 0.0448"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_3"><origin xyz="-0.1062 0.1827 0.0665"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_4"><origin xyz="-0.1062 0.1737 0.0872"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_5"><origin xyz="-0.1062 0.1624 0.1068"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_6"><origin xyz="-0.1062 0.1489 0.1249"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_7"><origin xyz="-0.1062 0.1334 0.1414"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_8"><origin xyz="-0.1062 0.1161 0.1559"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_9"><origin xyz="-0.1062 0.0972 0.1683"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_10"><origin xyz="-0.1062 0.0770 0.1785"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_11"><origin xyz="-0.1062 0.0558 0.1862"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_12"><origin xyz="-0.1062 0.0338 0.1914"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_13"><origin xyz="-0.1062 0.0113 0.1941"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_14"><origin xyz="-0.1062 -0.0113 0.1941"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_15"><origin xyz="-0.1062 -0.0338 0.1914"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_16"><origin xyz="-0.1062 -0.0558 0.1862"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_17"><origin xyz="-0.1062 -0.0770 0.1785"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_18"><origin xyz="-0.1062 -0.0972 0.1683"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_19"><origin xyz="-0.1062 -0.1161 0.1559"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_20"><origin xyz="-0.1062 -0.1334 0.1414"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_21"><origin xyz="-0.1062 -0.1489 0.1249"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_22"><origin xyz="-0.1062 -0.1624 0.1068"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_23"><origin xyz="-0.1062 -0.1737 0.0872"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_24"><origin xyz="-0.1062 -0.1827 0.0665"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_25"><origin xyz="-0.1062 -0.1891 0.0448"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_26"><origin xyz="-0.1062 -0.1931 0.0226"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_27"><origin xyz="-0.1062 -0.1944 0.0000"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_28"><origin xyz="-0.1062 -0.1931 -0.0226"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_29"><origin xyz="-0.1062 -0.1891 -0.0448"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_30"><origin xyz="-0.1062 -0.1827 -0.0665"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_31"><origin xyz="-0.1062 -0.1737 -0.0872"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_32"><origin xyz="-0.1062 -0.1624 -0.1068"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_33"><origin xyz="-0.1062 -0.1489 -0.1249"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_34"><origin xyz="-0.1062 -0.1334 -0.1414"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_35"><origin xyz="-0.1062 -0.1161 -0.1559"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_36"><origin xyz="-0.1062 -0.0972 -0.1683"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_37"><origin xyz="-0.1062 -0.0770 -0.1785"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_38"><origin xyz="-0.1062 -0.0558 -0.1862"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_39"><origin xyz="-0.1062 -0.0338 -0.1914"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_40"><origin xyz="-0.1062 -0.0113 -0.1941"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_41"><origin xyz="-0.1062 0.0113 -0.1941"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_42"><origin xyz="-0.1062 0.0338 -0.1914"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_43"><origin xyz="-0.1062 0.0558 -0.1862"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_44"><origin xyz="-0.1062 0.0770 -0.1785"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_45"><origin xyz="-0.1062 0.0972 -0.1683"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_46"><origin xyz="-0.1062 0.1161 -0.1559"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_47"><origin xyz="-0.1062 0.1334 -0.1414"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_48"><origin xyz="-0.1062 0.1489 -0.1249"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_49"><origin xyz="-0.1062 0.1624 -0.1068"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_50"><origin xyz="-0.1062 0.1737 -0.0872"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_51"><origin xyz="-0.1062 0.1827 -0.0665"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_52"><origin xyz="-0.1062 0.1891 -0.0448"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="seam2_53"><origin xyz="-0.1062 0.1931 -0.0226"/><geometry><sphere radius="0.006"/></geometry><material name="rubber_black"/></visual>
+  </link>
+  <joint name="football_mount" type="fixed">
+    <parent link="left_cup"/><child link="football"/><origin xyz="0.25 0 0"/>
+  </joint>
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+    <joint name="z_axis_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+    <joint name="tilt_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+    <joint name="left_cup_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+    <joint name="right_cup_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find football_gumming_sim)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+</robot>

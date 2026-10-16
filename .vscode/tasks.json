@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "FYP: 1 Start simulation", "type": "shell", "command": "bash ${workspaceFolder}/demo.sh start", "problemMatcher": [] },
+    { "label": "FYP: 2 Run gum demo (short)", "type": "shell", "command": "bash ${workspaceFolder}/demo.sh short", "problemMatcher": [] },
+    { "label": "FYP: 3 Run full seam loop", "type": "shell", "command": "bash ${workspaceFolder}/demo.sh full", "problemMatcher": [] },
+    { "label": "FYP: Clear gum", "type": "shell", "command": "bash ${workspaceFolder}/demo.sh clear", "problemMatcher": [] },
+    { "label": "FYP: Stop everything", "type": "shell", "command": "bash ${workspaceFolder}/demo.sh stop", "problemMatcher": [] },
+    { "label": "FYP: Backup to Windows", "type": "shell", "command": "bash ${workspaceFolder}/demo.sh backup", "problemMatcher": [] }
+  ]
+}

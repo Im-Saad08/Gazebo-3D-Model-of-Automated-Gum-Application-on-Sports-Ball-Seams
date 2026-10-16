@@ -1,0 +1,610 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="football_gumming_machine">
+  <material name="frame_gray"><color rgba="0.22 0.26 0.30 1"/></material>
+  <material name="rail_silver"><color rgba="0.65 0.68 0.72 1"/></material>
+  <material name="nozzle_orange"><color rgba="0.95 0.35 0.06 1"/></material>
+  <material name="football_white"><color rgba="0.92 0.92 0.88 1"/></material>
+  <material name="rubber_black"><color rgba="0.06 0.06 0.06 1"/></material>
+  <material name="cup_red"><color rgba="0.80 0.15 0.10 1"/></material>
+  <material name="motor_dark"><color rgba="0.10 0.11 0.14 1"/></material>
+  <material name="glue_amber"><color rgba="0.95 0.75 0.10 1"/></material>
+  <material name="seam_black"><color rgba="0.03 0.03 0.03 1"/></material>
+  <material name="green_led"><color rgba="0.10 0.85 0.25 1"/></material>
+  <material name="red_btn"><color rgba="0.85 0.10 0.10 1"/></material>
+  <material name="cabinet_blue"><color rgba="0.12 0.28 0.50 1"/></material>
+
+  <link name="world"/>
+  <joint name="world_fixed" type="fixed">
+    <parent link="world"/><child link="base_link"/><origin xyz="0 0 -0.14"/>
+  </joint>
+
+  <link name="base_link">
+    <inertial><mass value="30.0"/><inertia ixx="3.0" ixy="0" ixz="0" iyy="3.0" iyz="0" izz="3.0"/></inertial>
+    <visual><origin xyz="0 0 0.25"/><geometry><box size="1.2 0.9 0.10"/></geometry><material name="frame_gray"/></visual>
+    <collision><origin xyz="0 0 0.25"/><geometry><box size="1.2 0.9 0.10"/></geometry></collision>
+    <visual name="rail_a"><origin xyz="0 -0.30 0.315" rpy="0 0 0"/><geometry><box size="0.90 0.03 0.03"/></geometry><material name="rail_silver"/></visual>
+    <visual name="rail_b"><origin xyz="0 0.30 0.315" rpy="0 0 0"/><geometry><box size="0.90 0.03 0.03"/></geometry><material name="rail_silver"/></visual>
+    <visual name="cabinet"><origin xyz="0.30 -0.25 0.45" rpy="0 0 0"/><geometry><box size="0.20 0.16 0.30"/></geometry><material name="cabinet_blue"/></visual>
+    <visual name="cabinet_display"><origin xyz="0.30 -0.331 0.50" rpy="0 0 0"/><geometry><box size="0.10 0.004 0.06"/></geometry><material name="rubber_black"/></visual>
+    <visual name="cabinet_led"><origin xyz="0.25 -0.335 0.40"/><geometry><sphere radius="0.012"/></geometry><material name="green_led"/></visual>
+    <visual name="cabinet_estop"><origin xyz="0.35 -0.34 0.40" rpy="1.5708 0 0"/><geometry><cylinder radius="0.02" length="0.02"/></geometry><material name="red_btn"/></visual>
+    <visual name="foot_-0.5_-0.35"><origin xyz="-0.5 -0.35 0.17" rpy="0 0 0"/><geometry><cylinder radius="0.04" length="0.06"/></geometry><material name="rubber_black"/></visual>
+    <visual name="foot_-0.5_0.35"><origin xyz="-0.5 0.35 0.17" rpy="0 0 0"/><geometry><cylinder radius="0.04" length="0.06"/></geometry><material name="rubber_black"/></visual>
+    <visual name="foot_0.5_-0.35"><origin xyz="0.5 -0.35 0.17" rpy="0 0 0"/><geometry><cylinder radius="0.04" length="0.06"/></geometry><material name="rubber_black"/></visual>
+    <visual name="foot_0.5_0.35"><origin xyz="0.5 0.35 0.17" rpy="0 0 0"/><geometry><cylinder radius="0.04" length="0.06"/></geometry><material name="rubber_black"/></visual>
+  </link>
+  <link name="left_front_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="left_front_post_mount" type="fixed">
+    <parent link="base_link"/><child link="left_front_post"/><origin xyz="-0.52 -0.37 0.95"/>
+  </joint>
+  <link name="left_back_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="left_back_post_mount" type="fixed">
+    <parent link="base_link"/><child link="left_back_post"/><origin xyz="-0.52 0.37 0.95"/>
+  </joint>
+  <link name="right_front_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="right_front_post_mount" type="fixed">
+    <parent link="base_link"/><child link="right_front_post"/><origin xyz="0.52 -0.37 0.95"/>
+  </joint>
+  <link name="right_back_post">
+    <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
+    <visual><geometry><box size="0.07 0.07 1.4"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.07 1.4"/></geometry></collision>
+  </link>
+  <joint name="right_back_post_mount" type="fixed">
+    <parent link="base_link"/><child link="right_back_post"/><origin xyz="0.52 0.37 0.95"/>
+  </joint>
+  <link name="top_front_beam">
+    <inertial><mass value="3.0"/><inertia ixx="0.002450" ixy="0" ixz="0" iyy="0.303725" iyz="0" izz="0.303725"/></inertial>
+    <visual><geometry><box size="1.1 0.07 0.07"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="1.1 0.07 0.07"/></geometry></collision>
+  </link>
+  <joint name="front_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_front_beam"/><origin xyz="0 -0.37 1.65"/>
+  </joint>
+  <link name="top_back_beam">
+    <inertial><mass value="3.0"/><inertia ixx="0.002450" ixy="0" ixz="0" iyy="0.303725" iyz="0" izz="0.303725"/></inertial>
+    <visual><geometry><box size="1.1 0.07 0.07"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="1.1 0.07 0.07"/></geometry></collision>
+  </link>
+  <joint name="back_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_back_beam"/><origin xyz="0 0.37 1.65"/>
+  </joint>
+  <link name="top_cross_beam">
+    <inertial><mass value="3.0"/><inertia ixx="0.138125" ixy="0" ixz="0" iyy="0.002450" iyz="0" izz="0.138125"/></inertial>
+    <visual><geometry><box size="0.07 0.74 0.07"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.07 0.74 0.07"/></geometry></collision>
+  </link>
+  <joint name="cross_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_cross_beam"/><origin xyz="0 0 1.65"/>
+  </joint>
+  <link name="low_rail_front">
+    <inertial><mass value="2.0"/><inertia ixx="0.000833" ixy="0" ixz="0" iyy="0.167083" iyz="0" izz="0.167083"/></inertial>
+    <visual><geometry><box size="1.0 0.05 0.05"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="1.0 0.05 0.05"/></geometry></collision>
+  </link>
+  <joint name="low_rail_front_mount" type="fixed">
+    <parent link="base_link"/><child link="low_rail_front"/><origin xyz="0 -0.37 0.40"/>
+  </joint>
+  <link name="low_rail_back">
+    <inertial><mass value="2.0"/><inertia ixx="0.000833" ixy="0" ixz="0" iyy="0.167083" iyz="0" izz="0.167083"/></inertial>
+    <visual><geometry><box size="1.0 0.05 0.05"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="1.0 0.05 0.05"/></geometry></collision>
+  </link>
+  <joint name="low_rail_back_mount" type="fixed">
+    <parent link="base_link"/><child link="low_rail_back"/><origin xyz="0 0.37 0.40"/>
+  </joint>
+  <link name="low_rail_left">
+    <inertial><mass value="2.0"/><inertia ixx="0.079767" ixy="0" ixz="0" iyy="0.000833" iyz="0" izz="0.079767"/></inertial>
+    <visual><geometry><box size="0.05 0.69 0.05"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="0.05 0.69 0.05"/></geometry></collision>
+  </link>
+  <joint name="low_rail_left_mount" type="fixed">
+    <parent link="base_link"/><child link="low_rail_left"/><origin xyz="-0.52 0 0.40"/>
+  </joint>
+  <link name="low_rail_right">
+    <inertial><mass value="2.0"/><inertia ixx="0.079767" ixy="0" ixz="0" iyy="0.000833" iyz="0" izz="0.079767"/></inertial>
+    <visual><geometry><box size="0.05 0.69 0.05"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="0.05 0.69 0.05"/></geometry></collision>
+  </link>
+  <joint name="low_rail_right_mount" type="fixed">
+    <parent link="base_link"/><child link="low_rail_right"/><origin xyz="0.52 0 0.40"/>
+  </joint>
+  <link name="nozzle_rail">
+    <inertial><mass value="1.0"/><inertia ixx="0.030133" ixy="0" ixz="0" iyy="0.030133" iyz="0" izz="0.000267"/></inertial>
+    <visual><geometry><box size="0.04 0.04 0.6"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="0.04 0.04 0.6"/></geometry></collision>
+    <visual name="z_motor"><origin xyz="0 0 0.38" rpy="0 0 0"/><geometry><cylinder radius="0.04" length="0.09"/></geometry><material name="motor_dark"/></visual>
+    <visual name="z_coupling"><origin xyz="0 0 0.32" rpy="0 0 0"/><geometry><cylinder radius="0.015" length="0.05"/></geometry><material name="rail_silver"/></visual>
+    <visual name="guide_a"><origin xyz="0.0 -0.03 0" rpy="0 0 0"/><geometry><box size="0.01 0.01 0.60"/></geometry><material name="rail_silver"/></visual>
+    <visual name="guide_b"><origin xyz="0.0 0.03 0" rpy="0 0 0"/><geometry><box size="0.01 0.01 0.60"/></geometry><material name="rail_silver"/></visual>
+  </link>
+  <joint name="rail_mount" type="fixed">
+    <parent link="base_link"/><child link="nozzle_rail"/><origin xyz="0 0 1.35"/>
+  </joint>
+  <link name="z_carriage">
+    <inertial><mass value="1.0"/><inertia ixx="0.002967" ixy="0" ixz="0" iyy="0.002967" iyz="0" izz="0.001667"/></inertial>
+    <visual><geometry><box size="0.1 0.1 0.16"/></geometry><material name="rail_silver"/></visual>
+    <collision><geometry><box size="0.1 0.1 0.16"/></geometry></collision>
+  </link>
+  <joint name="z_axis_joint" type="prismatic">
+    <parent link="nozzle_rail"/><child link="z_carriage"/>
+    <origin xyz="0 0 0.15"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.20" upper="0.10" effort="60" velocity="0.15"/>
+    <dynamics damping="4.0" friction="0.2"/>
+  </joint>
+
+  <link name="nozzle_body">
+    <inertial><mass value="0.5"/><inertia ixx="0.002604" ixy="0" ixz="0" iyy="0.002604" iyz="0" izz="0.000408"/></inertial>
+    <visual name="body"><origin xyz="0 0 0" rpy="0 0 0"/><geometry><box size="0.07 0.07 0.24"/></geometry><material name="nozzle_orange"/></visual>
+    <visual name="tip_cone"><origin xyz="0 0 -0.135" rpy="0 0 0"/><geometry><cylinder radius="0.012" length="0.03"/></geometry><material name="rail_silver"/></visual>
+    <visual name="needle"><origin xyz="0 0 -0.16" rpy="0 0 0"/><geometry><cylinder radius="0.004" length="0.02"/></geometry><material name="rubber_black"/></visual>
+    <visual name="cartridge"><origin xyz="0.065 0 0.06" rpy="0 0 0"/><geometry><cylinder radius="0.022" length="0.2"/></geometry><material name="glue_amber"/></visual>
+    <visual name="cartridge_cap"><origin xyz="0.065 0 0.17" rpy="0 0 0"/><geometry><cylinder radius="0.026" length="0.02"/></geometry><material name="motor_dark"/></visual>
+    <visual name="air_line"><origin xyz="0.065 0 0.23" rpy="0 0 0"/><geometry><cylinder radius="0.006" length="0.1"/></geometry><material name="rubber_black"/></visual>
+    <visual name="glue_tube"><origin xyz="0.05 0 -0.03" rpy="0 1.5708 0"/><geometry><cylinder radius="0.006" length="0.035"/></geometry><material name="glue_amber"/></visual>
+    <visual name="valve"><origin xyz="0 0 0.10" rpy="0 0 0"/><geometry><box size="0.09 0.09 0.04"/></geometry><material name="motor_dark"/></visual>
+  </link>
+  <joint name="nozzle_mount" type="fixed">
+    <parent link="z_carriage"/><child link="nozzle_body"/><origin xyz="0 0 -0.18"/>
+  </joint>
+  <link name="pivot_pillar">
+    <inertial><mass value="2.0"/><inertia ixx="0.047417" ixy="0" ixz="0" iyy="0.047883" iyz="0" izz="0.001667"/></inertial>
+    <visual><geometry><box size="0.08 0.06 0.53"/></geometry><material name="frame_gray"/></visual>
+    <collision><geometry><box size="0.08 0.06 0.53"/></geometry></collision>
+    <visual name="tilt_motor"><origin xyz="0 0.09 0.235" rpy="1.5708 0 0"/><geometry><cylinder radius="0.05" length="0.12"/></geometry><material name="motor_dark"/></visual>
+    <visual name="tilt_motor_cap"><origin xyz="0 0.16 0.235" rpy="1.5708 0 0"/><geometry><cylinder radius="0.052" length="0.02"/></geometry><material name="rail_silver"/></visual>
+  </link>
+  <joint name="pillar_mount" type="fixed">
+    <parent link="base_link"/><child link="pivot_pillar"/><origin xyz="0 0.40 0.565"/>
+  </joint>
+  <link name="tilt_link">
+    <inertial><mass value="6.0"/><inertia ixx="0.3" ixy="0" ixz="0" iyy="0.3" iyz="0" izz="0.3"/></inertial>
+    <visual name="plate_left"><origin xyz="-0.40 0.10 0" rpy="0 0 0"/><geometry><box size="0.03 0.40 0.30"/></geometry><material name="rail_silver"/></visual>
+    <visual name="plate_right"><origin xyz="0.40 0.10 0" rpy="0 0 0"/><geometry><box size="0.03 0.40 0.30"/></geometry><material name="rail_silver"/></visual>
+    <visual name="rear_bar"><origin xyz="0 0.28 0" rpy="0 0 0"/><geometry><box size="0.83 0.04 0.04"/></geometry><material name="rail_silver"/></visual>
+    <visual name="pivot_pin"><origin xyz="0 0.34 0" rpy="1.5708 0 0"/><geometry><cylinder radius="0.025" length="0.12"/></geometry><material name="rail_silver"/></visual>
+    <visual name="motor_l"><origin xyz="-0.5 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.06" length="0.14"/></geometry><material name="motor_dark"/></visual>
+    <visual name="motor_cap_l"><origin xyz="-0.585 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.062" length="0.02"/></geometry><material name="rail_silver"/></visual>
+    <visual name="coupling_l"><origin xyz="-0.43 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.03" length="0.03"/></geometry><material name="rail_silver"/></visual>
+    <visual name="slide_top_l"><origin xyz="-0.42 0.10 0.11" rpy="0 0 0"/><geometry><box size="0.01 0.30 0.02"/></geometry><material name="motor_dark"/></visual>
+    <visual name="slide_bot_l"><origin xyz="-0.42 0.10 -0.11" rpy="0 0 0"/><geometry><box size="0.01 0.30 0.02"/></geometry><material name="motor_dark"/></visual>
+    <visual name="knob_l"><origin xyz="-0.43 0.22 0.0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.02" length="0.03"/></geometry><material name="red_btn"/></visual>
+    <visual name="motor_r"><origin xyz="0.5 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.06" length="0.14"/></geometry><material name="motor_dark"/></visual>
+    <visual name="motor_cap_r"><origin xyz="0.585 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.062" length="0.02"/></geometry><material name="rail_silver"/></visual>
+    <visual name="coupling_r"><origin xyz="0.43 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.03" length="0.03"/></geometry><material name="rail_silver"/></visual>
+    <visual name="slide_top_r"><origin xyz="0.42 0.10 0.11" rpy="0 0 0"/><geometry><box size="0.01 0.30 0.02"/></geometry><material name="motor_dark"/></visual>
+    <visual name="slide_bot_r"><origin xyz="0.42 0.10 -0.11" rpy="0 0 0"/><geometry><box size="0.01 0.30 0.02"/></geometry><material name="motor_dark"/></visual>
+    <visual name="knob_r"><origin xyz="0.43 0.22 0.0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.02" length="0.03"/></geometry><material name="red_btn"/></visual>
+  </link>
+  <joint name="tilt_joint" type="revolute">
+    <parent link="base_link"/><child link="tilt_link"/>
+    <origin xyz="0 0 0.80"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.8" upper="0.8" effort="200" velocity="0.5"/>
+    <dynamics damping="2.0" friction="0.1"/>
+  </joint>
+  <link name="left_cup">
+    <inertial><mass value="0.8"/><inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.003"/></inertial>
+    <visual name="pad"><origin rpy="0 1.5708 0"/><geometry><cylinder radius="0.07" length="0.08"/></geometry><material name="cup_red"/></visual>
+    <visual name="rim"><origin xyz="0.035 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.078" length="0.012"/></geometry><material name="rubber_black"/></visual>
+    <visual name="shaft"><origin xyz="-0.09 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.02" length="0.10"/></geometry><material name="rail_silver"/></visual>
+    <visual name="marker"><origin xyz="0 0.07 0"/><geometry><box size="0.09 0.02 0.02"/></geometry><material name="football_white"/></visual>
+  </link>
+  <joint name="left_cup_joint" type="revolute">
+    <parent link="tilt_link"/><child link="left_cup"/>
+    <origin xyz="-0.25 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-12.6" upper="12.6" effort="50" velocity="1.5"/>
+    <dynamics damping="1.0" friction="0.05"/>
+  </joint>
+  <link name="right_cup">
+    <inertial><mass value="0.8"/><inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.003"/></inertial>
+    <visual name="pad"><origin rpy="0 1.5708 0"/><geometry><cylinder radius="0.07" length="0.08"/></geometry><material name="cup_red"/></visual>
+    <visual name="rim"><origin xyz="-0.035 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.078" length="0.012"/></geometry><material name="rubber_black"/></visual>
+    <visual name="shaft"><origin xyz="0.09 0 0" rpy="0 1.5708 0"/><geometry><cylinder radius="0.02" length="0.10"/></geometry><material name="rail_silver"/></visual>
+    <visual name="marker"><origin xyz="0 0.07 0"/><geometry><box size="0.09 0.02 0.02"/></geometry><material name="football_white"/></visual>
+  </link>
+  <joint name="right_cup_joint" type="revolute">
+    <parent link="tilt_link"/><child link="right_cup"/>
+    <origin xyz="0.25 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-12.6" upper="12.6" effort="50" velocity="1.5"/>
+    <dynamics damping="1.0" friction="0.05"/>
+  </joint>
+  <link name="football">
+    <inertial><mass value="0.43"/><inertia ixx="0.008" ixy="0" ixz="0" iyy="0.008" iyz="0" izz="0.008"/></inertial>
+    <visual name="ball"><geometry><sphere radius="0.22"/></geometry><material name="football_white"/></visual>
+    <collision><geometry><sphere radius="0.22"/></geometry></collision>
+    <visual name="seam_0"><origin xyz="-0.21799 0.00000 -0.02971" rpy="3.14159 -1.43535 3.14159"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_1"><origin xyz="-0.22000 0.00000 -0.00000" rpy="-0.00000 -1.57080 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_2"><origin xyz="-0.21799 0.00000 0.02971" rpy="-0.00000 -1.43535 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_3"><origin xyz="-0.21329 -0.01230 -0.05251" rpy="1.85767 0.56705 -1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_4"><origin xyz="-0.20599 -0.03667 -0.06798" rpy="1.93566 0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_5"><origin xyz="-0.19493 -0.06036 -0.08221" rpy="2.00352 0.47091 -1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_6"><origin xyz="-0.21329 0.01230 -0.05251" rpy="-1.85767 0.56705 1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_7"><origin xyz="-0.20599 0.03667 -0.06798" rpy="-1.93566 0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_8"><origin xyz="-0.19493 0.06036 -0.08221" rpy="-2.00352 0.47091 1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_9"><origin xyz="-0.21329 -0.01230 0.05251" rpy="1.28392 -0.56705 -1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_10"><origin xyz="-0.20599 -0.03667 0.06798" rpy="1.20593 -0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_11"><origin xyz="-0.19493 -0.06036 0.08221" rpy="1.13807 -0.47091 -1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_12"><origin xyz="-0.21329 0.01230 0.05251" rpy="-1.28392 -0.56705 1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_13"><origin xyz="-0.20599 0.03667 0.06798" rpy="-1.20593 -0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_14"><origin xyz="-0.19493 0.06036 0.08221" rpy="-1.13807 -0.47091 1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_15"><origin xyz="-0.18553 -0.08496 -0.08221" rpy="2.00352 -0.47091 -1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_16"><origin xyz="-0.17798 -0.11000 -0.06798" rpy="1.93566 -0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_17"><origin xyz="-0.16717 -0.13303 -0.05251" rpy="1.85767 -0.56705 -1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_18"><origin xyz="-0.18263 -0.06796 -0.10211" rpy="-2.92321 1.07533 0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_19"><origin xyz="-0.16933 -0.05933 -0.12731" rpy="-2.96544 0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_20"><origin xyz="-0.15292 -0.04960 -0.15018" rpy="-2.99183 0.80881 0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_21"><origin xyz="-0.18553 -0.08496 0.08221" rpy="1.13807 0.47091 -1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_22"><origin xyz="-0.17798 -0.11000 0.06798" rpy="1.20593 0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_23"><origin xyz="-0.16717 -0.13303 0.05251" rpy="1.28392 0.56705 -1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_24"><origin xyz="-0.18263 -0.06796 0.10211" rpy="-0.21839 -1.07533 0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_25"><origin xyz="-0.16933 -0.05933 0.12731" rpy="-0.17615 -0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_26"><origin xyz="-0.15292 -0.04960 0.15018" rpy="-0.14976 -0.80881 0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_27"><origin xyz="-0.18553 0.08496 -0.08221" rpy="-2.00352 -0.47091 1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_28"><origin xyz="-0.17798 0.11000 -0.06798" rpy="-1.93566 -0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_29"><origin xyz="-0.16717 0.13303 -0.05251" rpy="-1.85767 -0.56705 1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_30"><origin xyz="-0.18263 0.06796 -0.10211" rpy="2.92321 1.07533 -0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_31"><origin xyz="-0.16933 0.05933 -0.12731" rpy="2.96544 0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_32"><origin xyz="-0.15292 0.04960 -0.15018" rpy="2.99183 0.80881 -0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_33"><origin xyz="-0.18553 0.08496 0.08221" rpy="-1.13807 0.47091 1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_34"><origin xyz="-0.17798 0.11000 0.06798" rpy="-1.20593 0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_35"><origin xyz="-0.16717 0.13303 0.05251" rpy="-1.28392 0.56705 1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_36"><origin xyz="-0.18263 0.06796 0.10211" rpy="0.21839 -1.07533 -0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_37"><origin xyz="-0.16933 0.05933 0.12731" rpy="0.17615 -0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_38"><origin xyz="-0.15292 0.04960 0.15018" rpy="0.14976 -0.80881 -0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_39"><origin xyz="-0.16248 -0.14532 -0.02971" rpy="-3.14159 -1.43535 -2.41186"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_40"><origin xyz="-0.16398 -0.14667 -0.00000" rpy="0.72973 -1.57080 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_41"><origin xyz="-0.16248 -0.14532 0.02971" rpy="0.00000 -1.43535 0.72973"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_42"><origin xyz="-0.15018 -0.15292 -0.04960" rpy="1.81316 0.34968 -0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_43"><origin xyz="-0.12731 -0.16933 -0.05933" rpy="1.85829 0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_44"><origin xyz="-0.10211 -0.18263 -0.06796" rpy="1.89740 0.27316 -0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_45"><origin xyz="-0.15018 -0.15292 0.04960" rpy="1.32843 -0.34968 -0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_46"><origin xyz="-0.12731 -0.16933 0.05933" rpy="1.28330 -0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_47"><origin xyz="-0.10211 -0.18263 0.06796" rpy="1.24420 -0.27316 -0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_48"><origin xyz="-0.16248 0.14532 -0.02971" rpy="3.14159 -1.43535 2.41186"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_49"><origin xyz="-0.16398 0.14667 -0.00000" rpy="-0.72973 -1.57080 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_50"><origin xyz="-0.16248 0.14532 0.02971" rpy="-0.00000 -1.43535 -0.72973"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_51"><origin xyz="-0.15018 0.15292 -0.04960" rpy="-1.81316 0.34968 0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_52"><origin xyz="-0.12731 0.16933 -0.05933" rpy="-1.85829 0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_53"><origin xyz="-0.10211 0.18263 -0.06796" rpy="-1.89740 0.27316 0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_54"><origin xyz="-0.15018 0.15292 0.04960" rpy="-1.32843 -0.34968 0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_55"><origin xyz="-0.12731 0.16933 0.05933" rpy="-1.28330 -0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_56"><origin xyz="-0.10211 0.18263 0.06796" rpy="-1.24420 -0.27316 0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_57"><origin xyz="-0.14532 -0.02971 -0.16248" rpy="-2.40729 0.10082 1.66140"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_58"><origin xyz="-0.14667 -0.00000 -0.16398" rpy="-2.41186 0.00000 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_59"><origin xyz="-0.14532 0.02971 -0.16248" rpy="-2.40729 -0.10082 1.48019"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_60"><origin xyz="-0.13303 -0.05251 -0.16717" rpy="2.55962 0.42842 -0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_61"><origin xyz="-0.11000 -0.06798 -0.17798" rpy="2.58802 0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_62"><origin xyz="-0.08496 -0.08221 -0.18553" rpy="2.60642 0.19824 -0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_63"><origin xyz="-0.14532 -0.02971 0.16248" rpy="-0.73430 -0.10082 1.66140"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_64"><origin xyz="-0.14667 -0.00000 0.16398" rpy="-0.72973 -0.00000 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_65"><origin xyz="-0.14532 0.02971 0.16248" rpy="-0.73430 0.10082 1.48019"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_66"><origin xyz="-0.13303 -0.05251 0.16717" rpy="0.58198 -0.42842 -0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_67"><origin xyz="-0.11000 -0.06798 0.17798" rpy="0.55357 -0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_68"><origin xyz="-0.08496 -0.08221 0.18553" rpy="0.53517 -0.19824 -0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_69"><origin xyz="-0.13303 0.05251 -0.16717" rpy="-2.55962 0.42842 0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_70"><origin xyz="-0.11000 0.06798 -0.17798" rpy="-2.58802 0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_71"><origin xyz="-0.08496 0.08221 -0.18553" rpy="-2.60642 0.19824 0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_72"><origin xyz="-0.13303 0.05251 0.16717" rpy="-0.58198 -0.42842 0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_73"><origin xyz="-0.11000 0.06798 0.17798" rpy="-0.55357 -0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_74"><origin xyz="-0.08496 0.08221 0.18553" rpy="-0.53517 -0.19824 0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_75"><origin xyz="-0.08221 -0.19493 -0.06036" rpy="2.02382 -0.89323 -0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_76"><origin xyz="-0.06798 -0.20599 -0.03667" rpy="1.85829 -0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_77"><origin xyz="-0.05251 -0.21329 -0.01230" rpy="1.66964 -0.96863 -0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_78"><origin xyz="-0.08221 -0.18553 -0.08496" rpy="2.46673 1.05343 0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_79"><origin xyz="-0.06798 -0.17798 -0.11000" rpy="2.58802 0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_80"><origin xyz="-0.05251 -0.16717 -0.13303" rpy="2.66914 0.82433 0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_81"><origin xyz="-0.08221 -0.19493 0.06036" rpy="1.11777 0.89323 -0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_82"><origin xyz="-0.06798 -0.20599 0.03667" rpy="1.28330 0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_83"><origin xyz="-0.05251 -0.21329 0.01230" rpy="1.47195 0.96863 -0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_84"><origin xyz="-0.08221 -0.18553 0.08496" rpy="0.67486 -1.05343 0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_85"><origin xyz="-0.06798 -0.17798 0.11000" rpy="0.55357 -0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_86"><origin xyz="-0.05251 -0.16717 0.13303" rpy="0.47245 -0.82433 0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_87"><origin xyz="-0.08221 0.18553 -0.08496" rpy="-2.46673 1.05343 -0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_88"><origin xyz="-0.06798 0.17798 -0.11000" rpy="-2.58802 0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_89"><origin xyz="-0.05251 0.16717 -0.13303" rpy="-2.66914 0.82433 -0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_90"><origin xyz="-0.08221 0.19493 -0.06036" rpy="-2.02382 -0.89323 0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_91"><origin xyz="-0.06798 0.20599 -0.03667" rpy="-1.85829 -0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_92"><origin xyz="-0.05251 0.21329 -0.01230" rpy="-1.66964 -0.96863 0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_93"><origin xyz="-0.08221 0.18553 0.08496" rpy="-0.67486 -1.05343 -0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_94"><origin xyz="-0.06798 0.17798 0.11000" rpy="-0.55357 -0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_95"><origin xyz="-0.05251 0.16717 0.13303" rpy="-0.47245 -0.82433 -0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_96"><origin xyz="-0.08221 0.19493 0.06036" rpy="-1.11777 0.89323 0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_97"><origin xyz="-0.06798 0.20599 0.03667" rpy="-1.28330 0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_98"><origin xyz="-0.05251 0.21329 0.01230" rpy="-1.47195 0.96863 0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_99"><origin xyz="-0.06796 -0.10211 -0.18263" rpy="2.69552 -0.40225 -1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_100"><origin xyz="-0.05933 -0.12731 -0.16933" rpy="2.66539 -0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_101"><origin xyz="-0.04960 -0.15018 -0.15292" rpy="2.62267 -0.64269 -1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_102"><origin xyz="-0.06036 -0.08221 -0.19493" rpy="2.95566 0.44740 0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_103"><origin xyz="-0.03667 -0.06798 -0.20599" rpy="2.96544 0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_104"><origin xyz="-0.01230 -0.05251 -0.21329" rpy="2.97135 0.18073 0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_105"><origin xyz="-0.06796 -0.10211 0.18263" rpy="0.44608 0.40225 -1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_106"><origin xyz="-0.05933 -0.12731 0.16933" rpy="0.47620 0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_107"><origin xyz="-0.04960 -0.15018 0.15292" rpy="0.51892 0.64269 -1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_108"><origin xyz="-0.06036 -0.08221 0.19493" rpy="0.18593 -0.44740 0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_109"><origin xyz="-0.03667 -0.06798 0.20599" rpy="0.17615 -0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_110"><origin xyz="-0.01230 -0.05251 0.21329" rpy="0.17025 -0.18073 0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_111"><origin xyz="-0.06796 0.10211 -0.18263" rpy="-2.69552 -0.40225 1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_112"><origin xyz="-0.05933 0.12731 -0.16933" rpy="-2.66539 -0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_113"><origin xyz="-0.04960 0.15018 -0.15292" rpy="-2.62267 -0.64269 1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_114"><origin xyz="-0.06036 0.08221 -0.19493" rpy="-2.95566 0.44740 -0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_115"><origin xyz="-0.03667 0.06798 -0.20599" rpy="-2.96544 0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_116"><origin xyz="-0.01230 0.05251 -0.21329" rpy="-2.97135 0.18073 -0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_117"><origin xyz="-0.06796 0.10211 0.18263" rpy="-0.44608 0.40225 1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_118"><origin xyz="-0.05933 0.12731 0.16933" rpy="-0.47620 0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_119"><origin xyz="-0.04960 0.15018 0.15292" rpy="-0.51892 0.64269 1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_120"><origin xyz="-0.06036 0.08221 0.19493" rpy="-0.18593 -0.44740 -0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_121"><origin xyz="-0.03667 0.06798 0.20599" rpy="-0.17615 -0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_122"><origin xyz="-0.01230 0.05251 0.21329" rpy="-0.17025 -0.18073 -0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_123"><origin xyz="-0.02971 -0.21799 0.00000" rpy="1.57080 -0.00000 -0.13545"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_124"><origin xyz="-0.00000 -0.22000 0.00000" rpy="1.57080 -0.00000 -0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_125"><origin xyz="0.02971 -0.21799 0.00000" rpy="1.57080 -0.00000 0.13545"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_126"><origin xyz="-0.02971 -0.16248 -0.14532" rpy="2.29595 0.09014 -0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_127"><origin xyz="-0.00000 -0.16398 -0.14667" rpy="2.30052 0.00000 -0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_128"><origin xyz="0.02971 -0.16248 -0.14532" rpy="2.29595 -0.09014 0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_129"><origin xyz="-0.02971 -0.16248 0.14532" rpy="0.84564 -0.09014 -0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_130"><origin xyz="-0.00000 -0.16398 0.14667" rpy="0.84107 -0.00000 -0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_131"><origin xyz="0.02971 -0.16248 0.14532" rpy="0.84564 0.09014 0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_132"><origin xyz="-0.02971 0.16248 -0.14532" rpy="-2.29595 0.09014 0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_133"><origin xyz="-0.00000 0.16398 -0.14667" rpy="-2.30052 0.00000 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_134"><origin xyz="0.02971 0.16248 -0.14532" rpy="-2.29595 -0.09014 -0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_135"><origin xyz="-0.02971 0.16248 0.14532" rpy="-0.84564 -0.09014 0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_136"><origin xyz="-0.00000 0.16398 0.14667" rpy="-0.84107 -0.00000 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_137"><origin xyz="0.02971 0.16248 0.14532" rpy="-0.84564 0.09014 -0.10123"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_138"><origin xyz="-0.02971 0.21799 0.00000" rpy="-1.57080 -0.00000 0.13545"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_139"><origin xyz="-0.00000 0.22000 0.00000" rpy="-1.57080 -0.00000 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_140"><origin xyz="0.02971 0.21799 0.00000" rpy="-1.57080 -0.00000 -0.13545"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_141"><origin xyz="0.00000 -0.02971 -0.21799" rpy="3.14159 0.13545 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_142"><origin xyz="0.00000 -0.00000 -0.22000" rpy="3.14159 0.00000 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_143"><origin xyz="0.00000 0.02971 -0.21799" rpy="3.14159 -0.13545 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_144"><origin xyz="0.01230 -0.05251 -0.21329" rpy="2.97135 -0.18073 -0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_145"><origin xyz="0.03667 -0.06798 -0.20599" rpy="2.96544 -0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_146"><origin xyz="0.06036 -0.08221 -0.19493" rpy="2.95566 -0.44740 -0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_147"><origin xyz="0.00000 -0.02971 0.21799" rpy="0.00000 -0.13545 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_148"><origin xyz="0.00000 -0.00000 0.22000" rpy="0.00000 -0.00000 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_149"><origin xyz="0.00000 0.02971 0.21799" rpy="0.00000 0.13545 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_150"><origin xyz="0.01230 -0.05251 0.21329" rpy="0.17025 0.18073 -0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_151"><origin xyz="0.03667 -0.06798 0.20599" rpy="0.17615 0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_152"><origin xyz="0.06036 -0.08221 0.19493" rpy="0.18593 0.44740 -0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_153"><origin xyz="0.01230 0.05251 -0.21329" rpy="-2.97135 -0.18073 0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_154"><origin xyz="0.03667 0.06798 -0.20599" rpy="-2.96544 -0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_155"><origin xyz="0.06036 0.08221 -0.19493" rpy="-2.95566 -0.44740 0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_156"><origin xyz="0.01230 0.05251 0.21329" rpy="-0.17025 0.18073 0.57763"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_157"><origin xyz="0.03667 0.06798 0.20599" rpy="-0.17615 0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_158"><origin xyz="0.06036 0.08221 0.19493" rpy="-0.18593 0.44740 0.52732"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_159"><origin xyz="0.05251 -0.21329 -0.01230" rpy="1.66964 0.96863 0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_160"><origin xyz="0.06798 -0.20599 -0.03667" rpy="1.85829 0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_161"><origin xyz="0.08221 -0.19493 -0.06036" rpy="2.02382 0.89323 0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_162"><origin xyz="0.05251 -0.21329 0.01230" rpy="1.47195 -0.96863 0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_163"><origin xyz="0.06798 -0.20599 0.03667" rpy="1.28330 -0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_164"><origin xyz="0.08221 -0.19493 0.06036" rpy="1.11777 -0.89323 0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_165"><origin xyz="0.04960 -0.15018 -0.15292" rpy="2.62267 0.64269 1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_166"><origin xyz="0.05933 -0.12731 -0.16933" rpy="2.66539 0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_167"><origin xyz="0.06796 -0.10211 -0.18263" rpy="2.69552 0.40225 1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_168"><origin xyz="0.05251 -0.16717 -0.13303" rpy="2.66914 -0.82433 -0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_169"><origin xyz="0.06798 -0.17798 -0.11000" rpy="2.58802 -0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_170"><origin xyz="0.08221 -0.18553 -0.08496" rpy="2.46673 -1.05343 -0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_171"><origin xyz="0.04960 -0.15018 0.15292" rpy="0.51892 -0.64269 1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_172"><origin xyz="0.05933 -0.12731 0.16933" rpy="0.47620 -0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_173"><origin xyz="0.06796 -0.10211 0.18263" rpy="0.44608 -0.40225 1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_174"><origin xyz="0.05251 -0.16717 0.13303" rpy="0.47245 0.82433 -0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_175"><origin xyz="0.06798 -0.17798 0.11000" rpy="0.55357 0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_176"><origin xyz="0.08221 -0.18553 0.08496" rpy="0.67486 1.05343 -0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_177"><origin xyz="0.04960 0.15018 -0.15292" rpy="-2.62267 0.64269 -1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_178"><origin xyz="0.05933 0.12731 -0.16933" rpy="-2.66539 0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_179"><origin xyz="0.06796 0.10211 -0.18263" rpy="-2.69552 0.40225 -1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_180"><origin xyz="0.05251 0.16717 -0.13303" rpy="-2.66914 -0.82433 0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_181"><origin xyz="0.06798 0.17798 -0.11000" rpy="-2.58802 -0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_182"><origin xyz="0.08221 0.18553 -0.08496" rpy="-2.46673 -1.05343 0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_183"><origin xyz="0.04960 0.15018 0.15292" rpy="-0.51892 -0.64269 -1.12853"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_184"><origin xyz="0.05933 0.12731 0.16933" rpy="-0.47620 -0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_185"><origin xyz="0.06796 0.10211 0.18263" rpy="-0.44608 -0.40225 -1.27325"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_186"><origin xyz="0.05251 0.16717 0.13303" rpy="-0.47245 0.82433 0.65831"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_187"><origin xyz="0.06798 0.17798 0.11000" rpy="-0.55357 0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_188"><origin xyz="0.08221 0.18553 0.08496" rpy="-0.67486 1.05343 0.40954"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_189"><origin xyz="0.05251 0.21329 -0.01230" rpy="-1.66964 0.96863 -0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_190"><origin xyz="0.06798 0.20599 -0.03667" rpy="-1.85829 0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_191"><origin xyz="0.08221 0.19493 -0.06036" rpy="-2.02382 0.89323 -0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_192"><origin xyz="0.05251 0.21329 0.01230" rpy="-1.47195 -0.96863 -0.32293"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_193"><origin xyz="0.06798 0.20599 0.03667" rpy="-1.28330 -0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_194"><origin xyz="0.08221 0.19493 0.06036" rpy="-1.11777 -0.89323 -0.76163"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_195"><origin xyz="0.08496 -0.08221 -0.18553" rpy="2.60642 -0.19824 0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_196"><origin xyz="0.11000 -0.06798 -0.17798" rpy="2.58802 -0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_197"><origin xyz="0.13303 -0.05251 -0.16717" rpy="2.55962 -0.42842 0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_198"><origin xyz="0.08496 -0.08221 0.18553" rpy="0.53517 0.19824 0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_199"><origin xyz="0.11000 -0.06798 0.17798" rpy="0.55357 0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_200"><origin xyz="0.13303 -0.05251 0.16717" rpy="0.58198 0.42842 0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_201"><origin xyz="0.08496 0.08221 -0.18553" rpy="-2.60642 -0.19824 -0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_202"><origin xyz="0.11000 0.06798 -0.17798" rpy="-2.58802 -0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_203"><origin xyz="0.13303 0.05251 -0.16717" rpy="-2.55962 -0.42842 -0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_204"><origin xyz="0.08496 0.08221 0.18553" rpy="-0.53517 0.19824 -0.48110"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_205"><origin xyz="0.11000 0.06798 0.17798" rpy="-0.55357 0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_206"><origin xyz="0.13303 0.05251 0.16717" rpy="-0.58198 0.42842 -0.63170"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_207"><origin xyz="0.10211 -0.18263 -0.06796" rpy="1.89740 -0.27316 0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_208"><origin xyz="0.12731 -0.16933 -0.05933" rpy="1.85829 -0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_209"><origin xyz="0.15018 -0.15292 -0.04960" rpy="1.81316 -0.34968 0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_210"><origin xyz="0.10211 -0.18263 0.06796" rpy="1.24420 0.27316 0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_211"><origin xyz="0.12731 -0.16933 0.05933" rpy="1.28330 0.31416 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_212"><origin xyz="0.15018 -0.15292 0.04960" rpy="1.32843 0.34968 0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_213"><origin xyz="0.10211 0.18263 -0.06796" rpy="-1.89740 -0.27316 -0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_214"><origin xyz="0.12731 0.16933 -0.05933" rpy="-1.85829 -0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_215"><origin xyz="0.15018 0.15292 -0.04960" rpy="-1.81316 -0.34968 -0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_216"><origin xyz="0.10211 0.18263 0.06796" rpy="-1.24420 0.27316 -0.41869"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_217"><origin xyz="0.12731 0.16933 0.05933" rpy="-1.28330 0.31416 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_218"><origin xyz="0.15018 0.15292 0.04960" rpy="-1.32843 0.34968 -0.69185"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_219"><origin xyz="0.14532 -0.02971 -0.16248" rpy="2.40729 0.10082 1.48019"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_220"><origin xyz="0.14667 -0.00000 -0.16398" rpy="2.41186 0.00000 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_221"><origin xyz="0.14532 0.02971 -0.16248" rpy="2.40729 -0.10082 1.66140"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_222"><origin xyz="0.15292 -0.04960 -0.15018" rpy="-2.99183 -0.80881 -0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_223"><origin xyz="0.16933 -0.05933 -0.12731" rpy="-2.96544 -0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_224"><origin xyz="0.18263 -0.06796 -0.10211" rpy="-2.92321 -1.07533 -0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_225"><origin xyz="0.14532 -0.02971 0.16248" rpy="0.73430 -0.10082 1.48019"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_226"><origin xyz="0.14667 -0.00000 0.16398" rpy="0.72973 -0.00000 1.57080"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_227"><origin xyz="0.14532 0.02971 0.16248" rpy="0.73430 0.10082 1.66140"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_228"><origin xyz="0.15292 -0.04960 0.15018" rpy="-0.14976 0.80881 -0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_229"><origin xyz="0.16933 -0.05933 0.12731" rpy="-0.17615 0.94248 -0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_230"><origin xyz="0.18263 -0.06796 0.10211" rpy="-0.21839 1.07533 -0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_231"><origin xyz="0.15292 0.04960 -0.15018" rpy="2.99183 -0.80881 0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_232"><origin xyz="0.16933 0.05933 -0.12731" rpy="2.96544 -0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_233"><origin xyz="0.18263 0.06796 -0.10211" rpy="2.92321 -1.07533 0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_234"><origin xyz="0.15292 0.04960 0.15018" rpy="0.14976 0.80881 0.51929"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_235"><origin xyz="0.16933 0.05933 0.12731" rpy="0.17615 0.94248 0.55357"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_236"><origin xyz="0.18263 0.06796 0.10211" rpy="0.21839 1.07533 0.60337"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_237"><origin xyz="0.16248 -0.14532 -0.02971" rpy="3.14159 -1.43535 -0.72973"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_238"><origin xyz="0.16398 -0.14667 -0.00000" rpy="2.41186 -1.57080 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_239"><origin xyz="0.16248 -0.14532 0.02971" rpy="-0.00000 -1.43535 2.41186"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_240"><origin xyz="0.16717 -0.13303 -0.05251" rpy="1.85767 0.56705 1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_241"><origin xyz="0.17798 -0.11000 -0.06798" rpy="1.93566 0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_242"><origin xyz="0.18553 -0.08496 -0.08221" rpy="2.00352 0.47091 1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_243"><origin xyz="0.16717 -0.13303 0.05251" rpy="1.28392 -0.56705 1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_244"><origin xyz="0.17798 -0.11000 0.06798" rpy="1.20593 -0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_245"><origin xyz="0.18553 -0.08496 0.08221" rpy="1.13807 -0.47091 1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_246"><origin xyz="0.16248 0.14532 -0.02971" rpy="-3.14159 -1.43535 0.72973"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_247"><origin xyz="0.16398 0.14667 -0.00000" rpy="-2.41186 -1.57080 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_248"><origin xyz="0.16248 0.14532 0.02971" rpy="0.00000 -1.43535 -2.41186"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_249"><origin xyz="0.16717 0.13303 -0.05251" rpy="-1.85767 0.56705 -1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_250"><origin xyz="0.17798 0.11000 -0.06798" rpy="-1.93566 0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_251"><origin xyz="0.18553 0.08496 -0.08221" rpy="-2.00352 0.47091 -1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_252"><origin xyz="0.16717 0.13303 0.05251" rpy="-1.28392 -0.56705 -1.05582"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_253"><origin xyz="0.17798 0.11000 0.06798" rpy="-1.20593 -0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_254"><origin xyz="0.18553 0.08496 0.08221" rpy="-1.13807 -0.47091 -1.34796"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_255"><origin xyz="0.19493 -0.06036 -0.08221" rpy="2.00352 -0.47091 1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_256"><origin xyz="0.20599 -0.03667 -0.06798" rpy="1.93566 -0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_257"><origin xyz="0.21329 -0.01230 -0.05251" rpy="1.85767 -0.56705 1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_258"><origin xyz="0.19493 -0.06036 0.08221" rpy="1.13807 0.47091 1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_259"><origin xyz="0.20599 -0.03667 0.06798" rpy="1.20593 0.52360 1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_260"><origin xyz="0.21329 -0.01230 0.05251" rpy="1.28392 0.56705 1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_261"><origin xyz="0.19493 0.06036 -0.08221" rpy="-2.00352 -0.47091 -1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_262"><origin xyz="0.20599 0.03667 -0.06798" rpy="-1.93566 -0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_263"><origin xyz="0.21329 0.01230 -0.05251" rpy="-1.85767 -0.56705 -1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_264"><origin xyz="0.19493 0.06036 0.08221" rpy="-1.13807 0.47091 -1.06391"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_265"><origin xyz="0.20599 0.03667 0.06798" rpy="-1.20593 0.52360 -1.20593"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_266"><origin xyz="0.21329 0.01230 0.05251" rpy="-1.28392 0.56705 -1.35605"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_267"><origin xyz="0.21799 0.00000 -0.02971" rpy="3.14159 -1.43535 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_268"><origin xyz="0.22000 0.00000 -0.00000" rpy="-3.14159 -1.57080 0.00000"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="seam_269"><origin xyz="0.21799 0.00000 0.02971" rpy="0.00000 -1.43535 3.14159"/><geometry><box size="0.0318 0.005 0.003"/></geometry><material name="seam_black"/></visual>
+    <visual name="path1_0"><origin xyz="0 0.2225 0.0000"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_1"><origin xyz="0 0.2206 0.0290"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_2"><origin xyz="0 0.2149 0.0576"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_3"><origin xyz="0 0.2056 0.0851"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_4"><origin xyz="0 0.1927 0.1112"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_5"><origin xyz="0 0.1765 0.1354"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_6"><origin xyz="0 0.1573 0.1573"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_7"><origin xyz="0 0.1354 0.1765"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_8"><origin xyz="0 0.1113 0.1927"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_9"><origin xyz="0 0.0851 0.2056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_10"><origin xyz="0 0.0576 0.2149"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_11"><origin xyz="0 0.0290 0.2206"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_12"><origin xyz="0 0.0000 0.2225"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_13"><origin xyz="0 -0.0290 0.2206"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_14"><origin xyz="0 -0.0576 0.2149"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_15"><origin xyz="0 -0.0851 0.2056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_16"><origin xyz="0 -0.1112 0.1927"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_17"><origin xyz="0 -0.1354 0.1765"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_18"><origin xyz="0 -0.1573 0.1573"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_19"><origin xyz="0 -0.1765 0.1354"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_20"><origin xyz="0 -0.1927 0.1112"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_21"><origin xyz="0 -0.2056 0.0851"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_22"><origin xyz="0 -0.2149 0.0576"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_23"><origin xyz="0 -0.2206 0.0290"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_24"><origin xyz="0 -0.2225 0.0000"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_25"><origin xyz="0 -0.2206 -0.0290"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_26"><origin xyz="0 -0.2149 -0.0576"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_27"><origin xyz="0 -0.2056 -0.0851"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_28"><origin xyz="0 -0.1927 -0.1112"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_29"><origin xyz="0 -0.1765 -0.1354"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_30"><origin xyz="0 -0.1573 -0.1573"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_31"><origin xyz="0 -0.1354 -0.1765"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_32"><origin xyz="0 -0.1113 -0.1927"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_33"><origin xyz="0 -0.0851 -0.2056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_34"><origin xyz="0 -0.0576 -0.2149"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_35"><origin xyz="0 -0.0290 -0.2206"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_36"><origin xyz="0 -0.0000 -0.2225"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_37"><origin xyz="0 0.0290 -0.2206"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_38"><origin xyz="0 0.0576 -0.2149"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_39"><origin xyz="0 0.0851 -0.2056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_40"><origin xyz="0 0.1113 -0.1927"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_41"><origin xyz="0 0.1354 -0.1765"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_42"><origin xyz="0 0.1573 -0.1573"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_43"><origin xyz="0 0.1765 -0.1354"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_44"><origin xyz="0 0.1927 -0.1113"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_45"><origin xyz="0 0.2056 -0.0851"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_46"><origin xyz="0 0.2149 -0.0576"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path1_47"><origin xyz="0 0.2206 -0.0290"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_0"><origin xyz="-0.1067 0.1953 0.0000"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_1"><origin xyz="-0.1067 0.1933 0.0278"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_2"><origin xyz="-0.1067 0.1874 0.0550"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_3"><origin xyz="-0.1067 0.1776 0.0811"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_4"><origin xyz="-0.1067 0.1643 0.1056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_5"><origin xyz="-0.1067 0.1476 0.1279"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_6"><origin xyz="-0.1067 0.1279 0.1476"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_7"><origin xyz="-0.1067 0.1056 0.1643"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_8"><origin xyz="-0.1067 0.0811 0.1776"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_9"><origin xyz="-0.1067 0.0550 0.1874"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_10"><origin xyz="-0.1067 0.0278 0.1933"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_11"><origin xyz="-0.1067 0.0000 0.1953"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_12"><origin xyz="-0.1067 -0.0278 0.1933"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_13"><origin xyz="-0.1067 -0.0550 0.1874"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_14"><origin xyz="-0.1067 -0.0811 0.1776"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_15"><origin xyz="-0.1067 -0.1056 0.1643"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_16"><origin xyz="-0.1067 -0.1279 0.1476"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_17"><origin xyz="-0.1067 -0.1476 0.1279"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_18"><origin xyz="-0.1067 -0.1643 0.1056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_19"><origin xyz="-0.1067 -0.1776 0.0811"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_20"><origin xyz="-0.1067 -0.1874 0.0550"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_21"><origin xyz="-0.1067 -0.1933 0.0278"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_22"><origin xyz="-0.1067 -0.1953 0.0000"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_23"><origin xyz="-0.1067 -0.1933 -0.0278"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_24"><origin xyz="-0.1067 -0.1874 -0.0550"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_25"><origin xyz="-0.1067 -0.1776 -0.0811"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_26"><origin xyz="-0.1067 -0.1643 -0.1056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_27"><origin xyz="-0.1067 -0.1476 -0.1279"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_28"><origin xyz="-0.1067 -0.1279 -0.1476"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_29"><origin xyz="-0.1067 -0.1056 -0.1643"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_30"><origin xyz="-0.1067 -0.0811 -0.1776"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_31"><origin xyz="-0.1067 -0.0550 -0.1874"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_32"><origin xyz="-0.1067 -0.0278 -0.1933"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_33"><origin xyz="-0.1067 -0.0000 -0.1953"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_34"><origin xyz="-0.1067 0.0278 -0.1933"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_35"><origin xyz="-0.1067 0.0550 -0.1874"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_36"><origin xyz="-0.1067 0.0811 -0.1776"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_37"><origin xyz="-0.1067 0.1056 -0.1643"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_38"><origin xyz="-0.1067 0.1279 -0.1476"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_39"><origin xyz="-0.1067 0.1476 -0.1279"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_40"><origin xyz="-0.1067 0.1643 -0.1056"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_41"><origin xyz="-0.1067 0.1776 -0.0811"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_42"><origin xyz="-0.1067 0.1874 -0.0550"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+    <visual name="path2_43"><origin xyz="-0.1067 0.1933 -0.0278"/><geometry><sphere radius="0.0045"/></geometry><material name="glue_amber"/></visual>
+  </link>
+  <joint name="football_mount" type="fixed">
+    <parent link="left_cup"/><child link="football"/><origin xyz="0.25 0 0"/>
+  </joint>
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+    <joint name="z_axis_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+    <joint name="tilt_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+    <joint name="left_cup_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+    <joint name="right_cup_joint"><command_interface name="position"/><state_interface name="position"/><state_interface name="velocity"/></joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find football_gumming_sim)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+</robot>

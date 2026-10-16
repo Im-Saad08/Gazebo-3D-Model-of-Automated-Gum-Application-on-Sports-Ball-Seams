@@ -1,0 +1,233 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="football_gumming_machine">
+
+  <material name="frame_gray">
+    <color rgba="0.22 0.26 0.30 1"/>
+  </material>
+  <material name="rail_silver">
+    <color rgba="0.65 0.68 0.72 1"/>
+  </material>
+  <material name="nozzle_orange">
+    <color rgba="0.95 0.35 0.06 1"/>
+  </material>
+  <material name="football_white">
+    <color rgba="0.92 0.92 0.88 1"/>
+  </material>
+  <material name="rubber_black">
+    <color rgba="0.06 0.06 0.06 1"/>
+  </material>
+
+  <xacro:macro name="box_link" params="name x y z mass material">
+    <link name="${name}">
+      <inertial>
+        <mass value="${mass}"/>
+        <inertia ixx="${mass*(y*y+z*z)/12}"
+                 ixy="0" ixz="0"
+                 iyy="${mass*(x*x+z*z)/12}"
+                 iyz="0"
+                 izz="${mass*(x*x+y*y)/12}"/>
+      </inertial>
+      <visual>
+        <geometry><box size="${x} ${y} ${z}"/></geometry>
+        <material name="${material}"/>
+      </visual>
+      <collision>
+        <geometry><box size="${x} ${y} ${z}"/></geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <link name="base_link">
+    <inertial>
+      <mass value="30.0"/>
+      <inertia ixx="3.0" ixy="0" ixz="0"
+               iyy="3.0" iyz="0" izz="3.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.25"/>
+      <geometry><box size="1.2 0.9 0.10"/></geometry>
+      <material name="frame_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.25"/>
+      <geometry><box size="1.2 0.9 0.10"/></geometry>
+    </collision>
+  </link>
+
+  <xacro:macro name="frame_post" params="name x y">
+    <xacro:box_link name="${name}" x="0.07" y="0.07" z="1.4"
+                    mass="3.0" material="frame_gray"/>
+    <joint name="${name}_mount" type="fixed">
+      <parent link="base_link"/>
+      <child link="${name}"/>
+      <origin xyz="${x} ${y} 0.95"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:frame_post name="left_front_post"  x="-0.52" y="-0.37"/>
+  <xacro:frame_post name="left_back_post"   x="-0.52" y="0.37"/>
+  <xacro:frame_post name="right_front_post" x="0.52"  y="-0.37"/>
+  <xacro:frame_post name="right_back_post"  x="0.52"  y="0.37"/>
+
+  <xacro:box_link name="top_front_beam" x="1.1" y="0.07" z="0.07"
+                  mass="3.0" material="frame_gray"/>
+  <joint name="front_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_front_beam"/>
+    <origin xyz="0 -0.37 1.65"/>
+  </joint>
+
+  <xacro:box_link name="top_back_beam" x="1.1" y="0.07" z="0.07"
+                  mass="3.0" material="frame_gray"/>
+  <joint name="back_beam_mount" type="fixed">
+    <parent link="base_link"/><child link="top_back_beam"/>
+    <origin xyz="0 0.37 1.65"/>
+  </joint>
+
+  <!-- X axis: horizontal carriage -->
+  <xacro:box_link name="x_carriage" x="0.24" y="0.16" z="0.12"
+                  mass="2.0" material="rail_silver"/>
+  <joint name="x_axis_joint" type="prismatic">
+    <parent link="base_link"/>
+    <child link="x_carriage"/>
+    <origin xyz="0 0 1.53"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.35" upper="0.35" effort="100" velocity="0.25"/>
+    <dynamics damping="5.0" friction="0.2"/>
+  </joint>
+
+  <!-- Y axis: nozzle carriage across the machine -->
+  <xacro:box_link name="y_carriage" x="0.16" y="0.20" z="0.10"
+                  mass="1.5" material="rail_silver"/>
+  <joint name="y_axis_joint" type="prismatic">
+    <parent link="x_carriage"/>
+    <child link="y_carriage"/>
+    <origin xyz="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.22" upper="0.22" effort="100" velocity="0.25"/>
+    <dynamics damping="5.0" friction="0.2"/>
+  </joint>
+
+  <!-- Z axis: vertical nozzle slide -->
+  <xacro:box_link name="z_carriage" x="0.10" y="0.10" z="0.16"
+                  mass="1.0" material="rail_silver"/>
+  <joint name="z_axis_joint" type="prismatic">
+    <parent link="y_carriage"/>
+    <child link="z_carriage"/>
+    <origin xyz="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.43" upper="0.08" effort="60" velocity="0.15"/>
+    <dynamics damping="4.0" friction="0.2"/>
+  </joint>
+
+  <xacro:box_link name="nozzle_body" x="0.07" y="0.07" z="0.24"
+                  mass="0.5" material="nozzle_orange"/>
+  <joint name="nozzle_mount" type="fixed">
+    <parent link="z_carriage"/>
+    <child link="nozzle_body"/>
+    <origin xyz="0 0 -0.18"/>
+  </joint>
+
+  <!-- Rotary table: A axis rotates the football about vertical Z -->
+  <link name="rotary_table">
+    <inertial>
+      <mass value="4.0"/>
+      <inertia ixx="0.04" ixy="0" ixz="0"
+               iyy="0.04" iyz="0" izz="0.06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.18"/>
+      <geometry><cylinder radius="0.16" length="0.08"/></geometry>
+      <material name="rail_silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.18"/>
+      <geometry><cylinder radius="0.16" length="0.08"/></geometry>
+    </collision>
+  </link>
+
+  <joint name="a_rotary_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="rotary_table"/>
+    <origin xyz="0 0 0.58"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-6.283" upper="6.283" effort="50" velocity="1.0"/>
+    <dynamics damping="1.0" friction="0.1"/>
+  </joint>
+
+  <link name="football">
+    <inertial>
+      <mass value="0.43"/>
+      <inertia ixx="0.008" ixy="0" ixz="0"
+               iyy="0.008" iyz="0" izz="0.008"/>
+    </inertial>
+    <visual>
+      <geometry><sphere radius="0.22"/></geometry>
+      <material name="football_white"/>
+    </visual>
+    <collision>
+      <geometry><sphere radius="0.22"/></geometry>
+    </collision>
+
+    <!-- Initial seam markers: visual reference only -->
+    <visual name="seam_marker_1">
+      <origin xyz="0.219 0 0"/>
+      <geometry><sphere radius="0.008"/></geometry>
+      <material name="rubber_black"/>
+    </visual>
+    <visual name="seam_marker_2">
+      <origin xyz="0 0.219 0"/>
+      <geometry><sphere radius="0.008"/></geometry>
+      <material name="rubber_black"/>
+    </visual>
+    <visual name="seam_marker_3">
+      <origin xyz="-0.219 0 0"/>
+      <geometry><sphere radius="0.008"/></geometry>
+      <material name="rubber_black"/>
+    </visual>
+  </link>
+
+  <joint name="football_mount" type="fixed">
+    <parent link="rotary_table"/>
+    <child link="football"/>
+    <origin xyz="0 0 0.22"/>
+  </joint>
+
+
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <joint name="x_axis_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="y_axis_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="z_axis_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="a_rotary_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system"
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find football_gumming_sim)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
