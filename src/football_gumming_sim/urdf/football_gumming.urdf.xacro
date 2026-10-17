@@ -1,24 +1,34 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="football_gumming_machine">
-  <material name="frame_gray"><color rgba="0.22 0.26 0.30 1"/></material>
-  <material name="rail_silver"><color rgba="0.65 0.68 0.72 1"/></material>
-  <material name="nozzle_orange"><color rgba="0.95 0.35 0.06 1"/></material>
-  <material name="football_white"><color rgba="0.92 0.92 0.88 1"/></material>
-  <material name="rubber_black"><color rgba="0.06 0.06 0.06 1"/></material>
-  <material name="cup_red"><color rgba="0.80 0.15 0.10 1"/></material>
-  <material name="motor_dark"><color rgba="0.10 0.11 0.14 1"/></material>
-  <material name="glue_amber"><color rgba="0.95 0.75 0.10 1"/></material>
-  <material name="seam_black"><color rgba="0.03 0.03 0.03 1"/></material>
-  <material name="green_led"><color rgba="0.10 0.85 0.25 1"/></material>
-  <material name="red_btn"><color rgba="0.85 0.10 0.10 1"/></material>
-  <material name="cabinet_blue"><color rgba="0.12 0.28 0.50 1"/></material>
+  <material name="frame_gray"><color rgba="0.17 0.19 0.22 1"/></material>
+  <material name="alu_frame"><color rgba="0.74 0.76 0.79 1"/></material>
+  <material name="rail_silver"><color rgba="0.84 0.86 0.89 1"/></material>
+  <material name="alu_anodised"><color rgba="0.66 0.69 0.73 1"/></material>
+  <material name="steel_dark"><color rgba="0.40 0.42 0.46 1"/></material>
+  <material name="stainless"><color rgba="0.90 0.91 0.92 1"/></material>
+  <material name="galvanised"><color rgba="0.60 0.63 0.67 1"/></material>
+  <material name="rubber_black"><color rgba="0.05 0.05 0.05 1"/></material>
+  <material name="motor_dark"><color rgba="0.07 0.08 0.10 1"/></material>
+  <material name="cup_red"><color rgba="0.82 0.10 0.08 1"/></material>
+  <material name="glue_amber"><color rgba="0.98 0.74 0.08 1"/></material>
+  <material name="barrel_clear"><color rgba="0.80 0.90 0.97 0.30"/></material>
+  <material name="tip_blue"><color rgba="0.12 0.38 0.88 1"/></material>
+  <material name="luer_white"><color rgba="0.92 0.93 0.95 1"/></material>
+  <material name="hose_blue"><color rgba="0.12 0.45 0.90 1"/></material>
+  <material name="dryer_teal"><color rgba="0.08 0.55 0.55 1"/></material>
+  <material name="football_white"><color rgba="0.97 0.97 0.95 1"/></material>
+  <material name="patch_black"><color rgba="0.04 0.04 0.05 1"/></material>
+  <material name="seam_black"><color rgba="0.12 0.12 0.13 1"/></material>
+  <material name="enclosure_grey"><color rgba="0.80 0.81 0.80 1"/></material>
+  <material name="duct_grey"><color rgba="0.88 0.89 0.89 1"/></material>
   <material name="pcb_green"><color rgba="0.05 0.38 0.14 1"/></material>
-  <material name="hose_blue"><color rgba="0.15 0.45 0.85 1"/></material>
-  <material name="enclosure_grey"><color rgba="0.60 0.64 0.68 1"/></material>
-  <material name="duct_grey"><color rgba="0.80 0.82 0.84 1"/></material>
-  <material name="dryer_teal"><color rgba="0.10 0.55 0.55 1"/></material>
-  <material name="hmi_blue"><color rgba="0.10 0.32 0.65 1"/></material>
-  <material name="safety_yellow"><color rgba="0.95 0.80 0.05 1"/></material>
+  <material name="hmi_blue"><color rgba="0.08 0.30 0.62 1"/></material>
+  <material name="cabinet_blue"><color rgba="0.10 0.28 0.55 1"/></material>
+  <material name="safety_yellow"><color rgba="0.98 0.80 0.03 1"/></material>
+  <material name="green_led"><color rgba="0.10 0.85 0.25 1"/></material>
+  <material name="red_btn"><color rgba="0.85 0.08 0.08 1"/></material>
+  <material name="nozzle_orange"><color rgba="0.96 0.45 0.06 1"/></material>
+  <material name="nozzle_orange_old"><color rgba="0.95 0.35 0.06 1"/></material>
 
   <link name="world"/>
   <joint name="world_fixed" type="fixed">
@@ -39,7 +49,7 @@
     <visual name="cab_bracket_-0.26"><origin xyz="0.3085 0.16 0.27" rpy="0 0 0"/><geometry><box size="0.07 0.05 0.015"/></geometry><material name="frame_gray"/></visual>
     <visual name="cab_bracket_0.26"><origin xyz="0.3085 0.16 0.53" rpy="0 0 0"/><geometry><box size="0.07 0.05 0.015"/></geometry><material name="frame_gray"/></visual>
     <visual name="cab_shelf"><origin xyz="0.3085 0.15 0.1925" rpy="0 0 0"/><geometry><box size="0.07 0.1 0.015"/></geometry><material name="frame_gray"/></visual>
-    <visual name="cab_backplate"><origin xyz="0.515 0.177 0.4" rpy="0 0 0"/><geometry><box size="0.33 0.004 0.38"/></geometry><material name="rail_silver"/></visual>
+    <visual name="cab_backplate"><origin xyz="0.515 0.177 0.4" rpy="0 0 0"/><geometry><box size="0.33 0.004 0.38"/></geometry><material name="galvanised"/></visual>
     <visual name="din_rail_top"><origin xyz="0.515 0.173 0.495" rpy="0 0 0"/><geometry><box size="0.31 0.003 0.015"/></geometry><material name="duct_grey"/></visual>
     <visual name="din_rail_drive_0.06"><origin xyz="0.43 0.173 0.4075" rpy="0 0 0"/><geometry><box size="0.15 0.003 0.01"/></geometry><material name="duct_grey"/></visual>
     <visual name="din_rail_drive_-0.05"><origin xyz="0.43 0.173 0.3525" rpy="0 0 0"/><geometry><box size="0.15 0.003 0.01"/></geometry><material name="duct_grey"/></visual>
@@ -175,11 +185,11 @@
     <visual name="beacon_light_0"><origin xyz="0.38 0.085 0.6425" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="red_btn"/></visual>
     <visual name="beacon_light_1"><origin xyz="0.38 0.085 0.6675" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="nozzle_orange"/></visual>
     <visual name="beacon_light_2"><origin xyz="0.38 0.085 0.6925" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="green_led"/></visual>
-    <visual name="drip_tray_floor"><origin xyz="0 0.025 0.1625" rpy="0 0 0"/><geometry><box size="0.25 0.2 0.005"/></geometry><material name="rail_silver"/></visual>
-    <visual name="drip_tray_front"><origin xyz="0 -0.0725 0.175" rpy="0 0 0"/><geometry><box size="0.25 0.005 0.025"/></geometry><material name="rail_silver"/></visual>
-    <visual name="drip_tray_back"><origin xyz="0 0.1225 0.175" rpy="0 0 0"/><geometry><box size="0.25 0.005 0.025"/></geometry><material name="rail_silver"/></visual>
-    <visual name="drip_tray_left"><origin xyz="-0.1225 0.025 0.175" rpy="0 0 0"/><geometry><box size="0.005 0.2 0.025"/></geometry><material name="rail_silver"/></visual>
-    <visual name="drip_tray_right"><origin xyz="0.1225 0.025 0.175" rpy="0 0 0"/><geometry><box size="0.005 0.2 0.025"/></geometry><material name="rail_silver"/></visual>
+    <visual name="drip_tray_floor"><origin xyz="0 0.025 0.1625" rpy="0 0 0"/><geometry><box size="0.25 0.2 0.005"/></geometry><material name="stainless"/></visual>
+    <visual name="drip_tray_front"><origin xyz="0 -0.0725 0.175" rpy="0 0 0"/><geometry><box size="0.25 0.005 0.025"/></geometry><material name="stainless"/></visual>
+    <visual name="drip_tray_back"><origin xyz="0 0.1225 0.175" rpy="0 0 0"/><geometry><box size="0.25 0.005 0.025"/></geometry><material name="stainless"/></visual>
+    <visual name="drip_tray_left"><origin xyz="-0.1225 0.025 0.175" rpy="0 0 0"/><geometry><box size="0.005 0.2 0.025"/></geometry><material name="stainless"/></visual>
+    <visual name="drip_tray_right"><origin xyz="0.1225 0.025 0.175" rpy="0 0 0"/><geometry><box size="0.005 0.2 0.025"/></geometry><material name="stainless"/></visual>
     <visual name="foot_-0.5_-0.35"><origin xyz="-0.25 -0.175 0.085" rpy="0 0 0"/><geometry><cylinder radius="0.02" length="0.03"/></geometry><material name="rubber_black"/></visual>
     <visual name="foot_-0.5_0.35"><origin xyz="-0.25 0.175 0.085" rpy="0 0 0"/><geometry><cylinder radius="0.02" length="0.03"/></geometry><material name="rubber_black"/></visual>
     <visual name="foot_0.5_-0.35"><origin xyz="0.25 -0.175 0.085" rpy="0 0 0"/><geometry><cylinder radius="0.02" length="0.03"/></geometry><material name="rubber_black"/></visual>
@@ -187,7 +197,7 @@
   </link>
   <link name="left_front_post">
     <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
-    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="frame_gray"/></visual>
+    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.035 0.035 0.7"/></geometry></collision>
   </link>
   <joint name="left_front_post_mount" type="fixed">
@@ -195,7 +205,7 @@
   </joint>
   <link name="left_back_post">
     <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
-    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="frame_gray"/></visual>
+    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.035 0.035 0.7"/></geometry></collision>
   </link>
   <joint name="left_back_post_mount" type="fixed">
@@ -203,7 +213,7 @@
   </joint>
   <link name="right_front_post">
     <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
-    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="frame_gray"/></visual>
+    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.035 0.035 0.7"/></geometry></collision>
   </link>
   <joint name="right_front_post_mount" type="fixed">
@@ -211,7 +221,7 @@
   </joint>
   <link name="right_back_post">
     <inertial><mass value="3.0"/><inertia ixx="0.491225" ixy="0" ixz="0" iyy="0.491225" iyz="0" izz="0.002450"/></inertial>
-    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="frame_gray"/></visual>
+    <visual><geometry><box size="0.035 0.035 0.7"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.035 0.035 0.7"/></geometry></collision>
   </link>
   <joint name="right_back_post_mount" type="fixed">
@@ -219,7 +229,7 @@
   </joint>
   <link name="top_front_beam">
     <inertial><mass value="3.0"/><inertia ixx="0.002450" ixy="0" ixz="0" iyy="0.303725" iyz="0" izz="0.303725"/></inertial>
-    <visual><geometry><box size="0.55 0.035 0.035"/></geometry><material name="frame_gray"/></visual>
+    <visual><geometry><box size="0.55 0.035 0.035"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.55 0.035 0.035"/></geometry></collision>
   </link>
   <joint name="front_beam_mount" type="fixed">
@@ -227,7 +237,7 @@
   </joint>
   <link name="top_back_beam">
     <inertial><mass value="3.0"/><inertia ixx="0.002450" ixy="0" ixz="0" iyy="0.303725" iyz="0" izz="0.303725"/></inertial>
-    <visual><geometry><box size="0.55 0.035 0.035"/></geometry><material name="frame_gray"/></visual>
+    <visual><geometry><box size="0.55 0.035 0.035"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.55 0.035 0.035"/></geometry></collision>
   </link>
   <joint name="back_beam_mount" type="fixed">
@@ -235,7 +245,7 @@
   </joint>
   <link name="top_cross_beam">
     <inertial><mass value="3.0"/><inertia ixx="0.138125" ixy="0" ixz="0" iyy="0.002450" iyz="0" izz="0.138125"/></inertial>
-    <visual><geometry><box size="0.035 0.37 0.035"/></geometry><material name="frame_gray"/></visual>
+    <visual><geometry><box size="0.035 0.37 0.035"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.035 0.37 0.035"/></geometry></collision>
   </link>
   <joint name="cross_beam_mount" type="fixed">
@@ -243,7 +253,7 @@
   </joint>
   <link name="low_rail_front">
     <inertial><mass value="2.0"/><inertia ixx="0.000833" ixy="0" ixz="0" iyy="0.167083" iyz="0" izz="0.167083"/></inertial>
-    <visual><geometry><box size="0.5 0.025 0.025"/></geometry><material name="rail_silver"/></visual>
+    <visual><geometry><box size="0.5 0.025 0.025"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.5 0.025 0.025"/></geometry></collision>
   </link>
   <joint name="low_rail_front_mount" type="fixed">
@@ -251,7 +261,7 @@
   </joint>
   <link name="low_rail_back">
     <inertial><mass value="2.0"/><inertia ixx="0.000833" ixy="0" ixz="0" iyy="0.167083" iyz="0" izz="0.167083"/></inertial>
-    <visual><geometry><box size="0.5 0.025 0.025"/></geometry><material name="rail_silver"/></visual>
+    <visual><geometry><box size="0.5 0.025 0.025"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.5 0.025 0.025"/></geometry></collision>
   </link>
   <joint name="low_rail_back_mount" type="fixed">
@@ -259,7 +269,7 @@
   </joint>
   <link name="low_rail_left">
     <inertial><mass value="2.0"/><inertia ixx="0.079767" ixy="0" ixz="0" iyy="0.000833" iyz="0" izz="0.079767"/></inertial>
-    <visual><geometry><box size="0.025 0.345 0.025"/></geometry><material name="rail_silver"/></visual>
+    <visual><geometry><box size="0.025 0.345 0.025"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.025 0.345 0.025"/></geometry></collision>
   </link>
   <joint name="low_rail_left_mount" type="fixed">
@@ -267,7 +277,7 @@
   </joint>
   <link name="low_rail_right">
     <inertial><mass value="2.0"/><inertia ixx="0.079767" ixy="0" ixz="0" iyy="0.000833" iyz="0" izz="0.079767"/></inertial>
-    <visual><geometry><box size="0.025 0.345 0.025"/></geometry><material name="rail_silver"/></visual>
+    <visual><geometry><box size="0.025 0.345 0.025"/></geometry><material name="alu_frame"/></visual>
     <collision><geometry><box size="0.025 0.345 0.025"/></geometry></collision>
   </link>
   <joint name="low_rail_right_mount" type="fixed">
@@ -279,13 +289,13 @@
     <collision><geometry><box size="0.07 0.008 0.3"/></geometry></collision>
     <visual name="guide_rod_a"><origin xyz="0.022 -0.033 0" rpy="0 0 0"/><geometry><cylinder radius="0.003" length="0.32"/></geometry><material name="rail_silver"/></visual>
     <visual name="guide_rod_b"><origin xyz="-0.022 -0.033 0" rpy="0 0 0"/><geometry><cylinder radius="0.003" length="0.32"/></geometry><material name="rail_silver"/></visual>
-    <visual name="lead_screw"><origin xyz="0 -0.033 0" rpy="0 0 0"/><geometry><cylinder radius="0.004" length="0.32"/></geometry><material name="motor_dark"/></visual>
-    <visual name="end_block_top"><origin xyz="0 -0.0185 0.153" rpy="0 0 0"/><geometry><box size="0.07 0.045 0.014"/></geometry><material name="frame_gray"/></visual>
-    <visual name="end_block_bottom"><origin xyz="0 -0.0185 -0.153" rpy="0 0 0"/><geometry><box size="0.07 0.045 0.014"/></geometry><material name="frame_gray"/></visual>
+    <visual name="lead_screw"><origin xyz="0 -0.033 0" rpy="0 0 0"/><geometry><cylinder radius="0.004" length="0.32"/></geometry><material name="steel_dark"/></visual>
+    <visual name="end_block_top"><origin xyz="0 -0.0185 0.153" rpy="0 0 0"/><geometry><box size="0.07 0.045 0.014"/></geometry><material name="motor_dark"/></visual>
+    <visual name="end_block_bottom"><origin xyz="0 -0.0185 -0.153" rpy="0 0 0"/><geometry><box size="0.07 0.045 0.014"/></geometry><material name="motor_dark"/></visual>
     <visual name="z_coupling"><origin xyz="0 -0.033 0.175" rpy="0 0 0"/><geometry><cylinder radius="0.0075" length="0.025"/></geometry><material name="rail_silver"/></visual>
     <visual name="z_motor"><origin xyz="0 -0.033 0.21" rpy="0 0 0"/><geometry><cylinder radius="0.02" length="0.045"/></geometry><material name="motor_dark"/></visual>
-    <visual name="limit_switch_top"><origin xyz="0.038 -0.01 0.132" rpy="0 0 0"/><geometry><box size="0.012 0.01 0.016"/></geometry><material name="cabinet_blue"/></visual>
-    <visual name="limit_switch_bottom"><origin xyz="0.038 -0.01 0.045" rpy="0 0 0"/><geometry><box size="0.012 0.01 0.016"/></geometry><material name="cabinet_blue"/></visual>
+    <visual name="limit_switch_top"><origin xyz="0.038 -0.01 0.132" rpy="0 0 0"/><geometry><box size="0.012 0.01 0.016"/></geometry><material name="safety_yellow"/></visual>
+    <visual name="limit_switch_bottom"><origin xyz="0.038 -0.01 0.045" rpy="0 0 0"/><geometry><box size="0.012 0.01 0.016"/></geometry><material name="safety_yellow"/></visual>
   </link>
   <joint name="rail_mount" type="fixed">
     <parent link="base_link"/><child link="nozzle_rail"/><origin xyz="0 0.088 0.675"/>
@@ -299,11 +309,11 @@
     <visual name="plate_bolt_-22_28"><origin xyz="-0.022 -0.0315 0.028" rpy="1.5708 0 0"/><geometry><cylinder radius="0.0025" length="0.003"/></geometry><material name="rail_silver"/></visual>
     <visual name="plate_bolt_22_-28"><origin xyz="0.022 -0.0315 -0.028" rpy="1.5708 0 0"/><geometry><cylinder radius="0.0025" length="0.003"/></geometry><material name="rail_silver"/></visual>
     <visual name="plate_bolt_22_28"><origin xyz="0.022 -0.0315 0.028" rpy="1.5708 0 0"/><geometry><cylinder radius="0.0025" length="0.003"/></geometry><material name="rail_silver"/></visual>
-    <visual name="pneu_plate"><origin xyz="-0.028 0 0" rpy="0 0 0"/><geometry><box size="0.006 0.046 0.07"/></geometry><material name="frame_gray"/></visual>
+    <visual name="pneu_plate"><origin xyz="-0.028 0 0" rpy="0 0 0"/><geometry><box size="0.006 0.046 0.07"/></geometry><material name="alu_anodised"/></visual>
     <visual name="air_dryer"><origin xyz="-0.045 -0.012 -0.005" rpy="0 0 0"/><geometry><cylinder radius="0.013" length="0.055"/></geometry><material name="dryer_teal"/></visual>
     <visual name="air_regulator"><origin xyz="-0.045 0.012 0.005" rpy="0 0 0"/><geometry><cylinder radius="0.011" length="0.04"/></geometry><material name="rail_silver"/></visual>
     <visual name="regulator_knob"><origin xyz="-0.045 0.012 0.028" rpy="0 0 0"/><geometry><cylinder radius="0.008" length="0.01"/></geometry><material name="motor_dark"/></visual>
-    <visual name="pressure_gauge"><origin xyz="-0.045 0.012 0.04" rpy="1.5708 0 0"/><geometry><cylinder radius="0.017" length="0.008"/></geometry><material name="football_white"/></visual>
+    <visual name="pressure_gauge"><origin xyz="-0.045 0.012 0.04" rpy="1.5708 0 0"/><geometry><cylinder radius="0.017" length="0.008"/></geometry><material name="luer_white"/></visual>
     <visual name="gauge_needle"><origin xyz="-0.045 0.0075 0.042" rpy="0 0 0"/><geometry><box size="0.0015 0.001 0.012"/></geometry><material name="red_btn"/></visual>
     <visual name="dispense_solenoid"><origin xyz="-0.072 0 -0.005" rpy="0 0 0"/><geometry><box size="0.024 0.018 0.034"/></geometry><material name="motor_dark"/></visual>
     <visual name="solenoid_coil"><origin xyz="-0.072 0 0.019" rpy="0 0 0"/><geometry><cylinder radius="0.008" length="0.014"/></geometry><material name="rail_silver"/></visual>
@@ -314,7 +324,7 @@
     <visual name="reg_outlet_hose_b"><origin xyz="-0.072 0.0115 0" rpy="1.5708 0 0"/><geometry><cylinder radius="0.002" length="0.005"/></geometry><material name="hose_blue"/></visual>
     <visual name="air_inlet_coupler"><origin xyz="-0.118 -0.014 0.025" rpy="0 1.5708 0"/><geometry><cylinder radius="0.005" length="0.01"/></geometry><material name="rail_silver"/></visual>
     <visual name="limit_flag"><origin xyz="0.03 0.02 0.035" rpy="0 0 0"/><geometry><box size="0.01 0.016 0.02"/></geometry><material name="red_btn"/></visual>
-    <visual name="nut_housing"><origin xyz="0 0.014 0" rpy="0 0 0"/><geometry><box size="0.03 0.014 0.04"/></geometry><material name="frame_gray"/></visual>
+    <visual name="nut_housing"><origin xyz="0 0.014 0" rpy="0 0 0"/><geometry><box size="0.03 0.014 0.04"/></geometry><material name="alu_anodised"/></visual>
   </link>
   <joint name="z_axis_joint" type="prismatic">
     <parent link="nozzle_rail"/><child link="z_carriage"/>
@@ -327,11 +337,13 @@
   <link name="nozzle_body">
     <inertial><mass value="0.5"/><inertia ixx="0.002604" ixy="0" ixz="0" iyy="0.002604" iyz="0" izz="0.000408"/></inertial>
     <visual name="needle_22G"><origin xyz="0 0 -0.076" rpy="0 0 0"/><geometry><cylinder radius="0.00036" length="0.018"/></geometry><material name="rail_silver"/></visual>
-    <visual name="tip_taper"><origin xyz="0 0 -0.065" rpy="0 0 0"/><geometry><cylinder radius="0.0018" length="0.004"/></geometry><material name="nozzle_orange"/></visual>
-    <visual name="tip_taper2"><origin xyz="0 0 -0.0605" rpy="0 0 0"/><geometry><cylinder radius="0.0032" length="0.005"/></geometry><material name="nozzle_orange"/></visual>
-    <visual name="luer_hub"><origin xyz="0 0 -0.053" rpy="0 0 0"/><geometry><cylinder radius="0.0045" length="0.01"/></geometry><material name="nozzle_orange"/></visual>
-    <visual name="luer_lock_collar"><origin xyz="0 0 -0.044" rpy="0 0 0"/><geometry><cylinder radius="0.0065" length="0.008"/></geometry><material name="rail_silver"/></visual>
-    <visual name="barrel_10cc"><origin xyz="0 0 0.005" rpy="0 0 0"/><geometry><cylinder radius="0.0082" length="0.09"/></geometry><material name="glue_amber"/></visual>
+    <visual name="tip_taper"><origin xyz="0 0 -0.065" rpy="0 0 0"/><geometry><cylinder radius="0.0018" length="0.004"/></geometry><material name="tip_blue"/></visual>
+    <visual name="tip_taper2"><origin xyz="0 0 -0.0605" rpy="0 0 0"/><geometry><cylinder radius="0.0032" length="0.005"/></geometry><material name="tip_blue"/></visual>
+    <visual name="luer_hub"><origin xyz="0 0 -0.053" rpy="0 0 0"/><geometry><cylinder radius="0.0045" length="0.01"/></geometry><material name="tip_blue"/></visual>
+    <visual name="luer_lock_collar"><origin xyz="0 0 -0.044" rpy="0 0 0"/><geometry><cylinder radius="0.0065" length="0.008"/></geometry><material name="luer_white"/></visual>
+    <visual name="glue_fill"><origin xyz="0 0 -0.0065" rpy="0 0 0"/><geometry><cylinder radius="0.0072" length="0.067"/></geometry><material name="glue_amber"/></visual>
+    <visual name="piston_stopper"><origin xyz="0 0 0.03" rpy="0 0 0"/><geometry><cylinder radius="0.0072" length="0.006"/></geometry><material name="rubber_black"/></visual>
+    <visual name="barrel_10cc"><origin xyz="0 0 0.005" rpy="0 0 0"/><geometry><cylinder radius="0.0082" length="0.09"/></geometry><material name="barrel_clear"/></visual>
     <visual name="barrel_flange"><origin xyz="0 0 0.051" rpy="0 0 0"/><geometry><cylinder radius="0.0115" length="0.002"/></geometry><material name="motor_dark"/></visual>
     <visual name="clamp_collar"><origin xyz="0 0 0.044" rpy="0 0 0"/><geometry><cylinder radius="0.013" length="0.012"/></geometry><material name="rail_silver"/></visual>
     <visual name="piston_cap"><origin xyz="0 0 0.063" rpy="0 0 0"/><geometry><cylinder radius="0.0095" length="0.022"/></geometry><material name="motor_dark"/></visual>
@@ -415,6 +427,7 @@
     <inertial><mass value="0.43"/><inertia ixx="0.008" ixy="0" ixz="0" iyy="0.008" iyz="0" izz="0.008"/></inertial>
     <visual name="ball"><geometry><sphere radius="0.11"/></geometry><material name="football_white"/></visual>
     <collision><geometry><sphere radius="0.11"/></geometry></collision>
+    <visual name="pentagon_patches"><geometry><mesh filename="file://$(find football_gumming_sim)/meshes/ball_pentagons.stl" scale="1 1 1"/></geometry><material name="patch_black"/></visual>
     <visual name="seam_0"><origin xyz="-0.012635 0.063945 0.08861" rpy="-0.50681 -0.39925 -0.41577"/><geometry><box size="0.0159 0.0025 0.0015"/></geometry><material name="seam_black"/></visual>
     <visual name="seam_1"><origin xyz="-0 0.05783 0.09357" rpy="-0.48402 -0.28004 -0.48402"/><geometry><box size="0.0159 0.0025 0.0015"/></geometry><material name="seam_black"/></visual>
     <visual name="seam_2"><origin xyz="0.012635 0.05066 0.09682" rpy="-0.47010 -0.15967 -0.54771"/><geometry><box size="0.0159 0.0025 0.0015"/></geometry><material name="seam_black"/></visual>
