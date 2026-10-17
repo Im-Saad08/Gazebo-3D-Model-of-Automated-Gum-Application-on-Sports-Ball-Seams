@@ -14,3 +14,4 @@ axis_position_controller:
       - tilt_joint
       - left_cup_joint
       - right_cup_joint
+      - reclamp_joint

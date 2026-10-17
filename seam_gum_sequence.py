@@ -4,7 +4,7 @@
 # route passes under the nozzle. Amber gum beads appear on the ball right where the nozzle
 # is, and stay attached to the ball (they spin and tilt with it).
 #
-# usage: python3 seam_gum_sequence.py [time_scale] [edges] [--no-gum] [--clear]
+# usage: python3 seam_gum_sequence.py [time_scale] [edges] [--no-gum] [--clear] [--route=FILE]
 #   time_scale : 1.0 = normal speed; use 2.5 when Gazebo shows ~40% real-time
 #   edges      : seam edges to trace (default 50 = whole closed loop, ~4.5 m; 12 = short demo)
 #   --no-gum   : motion only
@@ -98,21 +98,38 @@ if CLEAR_ONLY:
     sys.exit(0)
 
 # ---------------------------------------------------------------- route + kinematics
-route = json.loads((Path(__file__).resolve().parent / "seam_path.json").read_text())
+_route_arg = [a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--route=")]
+route_file = Path(_route_arg[0]) if _route_arg else Path(__file__).resolve().parent / "seam_path.json"
+route = json.loads(route_file.read_text())
 R = route["radius"]
-V = [tuple(v) for v in route["vertices"]]
-NEDGES = min(NEDGES, len(V) - 1)
+K = R / 0.22                       # all constants above were tuned for a 0.22 m ball
+BALL_X *= K; BEAD_RADIUS *= K; BEAD_SIZE *= K; SPEED *= K; Z_UP *= K; Z_WORK *= K
+RECLAMP = bool(route.get("reclamp"))      # ball hangs on a re-clamp joint -> controller has 5 joints
+NJ = 5 if RECLAMP else 4
+if RECLAMP:
+    BALL_X = 0.0                                  # beads are placed in the football's own frame
+    PARENT = _parent_override[0] if _parent_override else "football_gumming_machine::football"
+
+RAW_PASSES = route.get("passes") or [{"name": "Clamp 1", "reclamp_angle": 0.0, "vertices": route["vertices"],
+                                      "cup_vertices": route["vertices"], "gum": route.get("gum")}]
+if not RECLAMP:
+    RAW_PASSES = RAW_PASSES[:1]
+if NEDGES < len(RAW_PASSES[0]["vertices"]) - 1:
+    RAW_PASSES = RAW_PASSES[:1]            # short demo: first clamp only
 
 def dot(a, b):
     return sum(x * y for x, y in zip(a, b))
 
+def ang(a, b):
+    return math.acos(max(-1.0, min(1.0, dot(a, b))))
+
 def slerp(a, b, t):
-    w = math.acos(max(-1.0, min(1.0, dot(a, b))))
+    w = ang(a, b)
     s = math.sin(w)
     return tuple((math.sin((1 - t) * w) * x + math.sin(t * w) * y) / s for x, y in zip(a, b))
 
 def ik(p, prev_spin):
-    """Tilt and spin that bring ball-frame point p under the nozzle (world top of ball)."""
+    """Tilt and spin that bring cup-frame point p under the nozzle (world top of ball)."""
     tilt = -math.asin(max(-1.0, min(1.0, p[0])))
     spin = math.pi / 2 - math.atan2(p[2], p[1])
     while spin - prev_spin > math.pi:
@@ -121,23 +138,31 @@ def ik(p, prev_spin):
         spin += 2 * math.pi
     return tilt, spin
 
-# sample the route (about 1 cm apart) and convert every sample to joint values
-STEP = 0.01 / R
-pts = []
-for a, b in zip(V[:NEDGES], V[1:NEDGES + 1]):
-    w = math.acos(max(-1.0, min(1.0, dot(a, b))))
-    n = max(2, int(w / STEP))
-    pts += [slerp(a, b, k / n) for k in range(n)]
-pts.append(V[NEDGES])
+STEP = 0.01 * K / R                # samples about 1 cm (scaled) apart
 
-tilts, spins, prev = [], [], 0.0     # first sample is reached from the home pose (spin 0)
-for p in pts:
-    t, s = ik(p, prev)
-    prev = s
-    tilts.append(t)
-    spins.append(s)
-LENGTH = sum(R * math.acos(max(-1.0, min(1.0, dot(a, b)))) for a, b in zip(pts[:-1], pts[1:]))
-TRACE_SECS = LENGTH / SPEED
+def prepare(ps):
+    V = [tuple(v) for v in ps["vertices"]]
+    C = [tuple(v) for v in ps.get("cup_vertices", ps["vertices"])]
+    G = ps.get("gum") or [True] * (len(V) - 1)
+    ne = min(NEDGES, len(V) - 1)
+    pts, cpts, gfl = [], [], []
+    for e in range(ne):
+        n = max(2, int(ang(V[e], V[e + 1]) / STEP))
+        for k in range(n):
+            pts.append(slerp(V[e], V[e + 1], k / n))      # football frame (where the bead sticks)
+            cpts.append(slerp(C[e], C[e + 1], k / n))     # cup frame (what the nozzle must reach)
+            gfl.append(G[e])
+    pts.append(V[ne]); cpts.append(C[ne]); gfl.append(G[ne - 1])
+    tilts, spins, prev = [], [], 0.0
+    for p in cpts:
+        t, s = ik(p, prev)
+        prev = s
+        tilts.append(t); spins.append(s)
+    length = sum(R * ang(a, b) for a, b in zip(pts[:-1], pts[1:]))
+    return {"name": ps.get("name", "pass"), "angle": ps.get("reclamp_angle", 0.0), "pts": pts, "cpts": cpts,
+            "gum": gfl, "tilts": tilts, "spins": spins, "length": length}
+
+PASSES = [prepare(ps) for ps in RAW_PASSES]
 
 # ---------------------------------------------------------------- publishing
 sent = []
@@ -151,14 +176,15 @@ else:
     node = rclpy.create_node("seam_sequence")
     pub = node.create_publisher(Float64MultiArray, "/axis_position_controller/commands", 10)
     def publish(state):
+        sent.append(list(state))
         m = Float64MultiArray()
         m.data = list(state)
         pub.publish(m)
 
-state = [Z_UP, 0.0, 0.0, 0.0]            # [z, tilt, left_cup, right_cup]
+state = [Z_UP, 0.0, 0.0, 0.0] + ([0.0] if RECLAMP else [])   # [z, tilt, left_cup, right_cup(, reclamp)]
 
 def send(z, tilt, spin):
-    state[:] = [z, tilt, spin, spin]
+    state[0:4] = [z, tilt, spin, spin]
     publish(state)
 
 def run(seconds, fn):
@@ -182,29 +208,41 @@ def move(target, secs, label):
         send(*[start[k] + (target[k] - start[k]) * s for k in range(3)])
     run(secs, fn)
 
-gum = None
-bead_log = []            # (sample index, command index when emitted)
+def reclamp_to(angle, secs, label):
+    print(label)
+    start = state[4]
+    def fn(u):
+        state[4] = start + (angle - start) * ease(u)
+        publish(state)
+    run(secs, fn)
 
-def trace():
-    N = len(pts) - 1
+gum = None
+bead_log = []            # (pass index, sample index, command index when emitted)
+bead_id = [0]
+
+def trace(pi, P):
+    N = len(P["pts"]) - 1
     nxt = [0]
+    tilts, spins = P["tilts"], P["spins"]
     def fn(u):
         f = u * N
         i = min(int(f), N - 1)
         r = f - i
         send(Z_WORK, tilts[i] + (tilts[i + 1] - tilts[i]) * r,
              spins[i] + (spins[i + 1] - spins[i]) * r)
-        if gum is not None:
-            while nxt[0] <= f and nxt[0] <= N:       # nozzle has reached sample nxt -> drop a bead
-                gum.add(nxt[0] + 1, pts[nxt[0]])
-                bead_log.append((nxt[0], len(sent)))
-                nxt[0] += 1
-    run(TRACE_SECS, fn)
+        while nxt[0] <= f and nxt[0] <= N:               # nozzle has reached sample nxt
+            if gum is not None and P["gum"][nxt[0]]:     # valve open only on glue edges
+                bead_id[0] += 1
+                gum.add(bead_id[0], P["pts"][nxt[0]])
+                bead_log.append((pi, nxt[0], len(sent)))
+            nxt[0] += 1
+    run(P["length"] / SPEED, fn)
 
 # ---------------------------------------------------------------- the show
 if not DRY:
     time.sleep(1.0)
-print(f"Seam route: {NEDGES} edges, {LENGTH:.2f} m, about {TRACE_SECS * SCALE:.0f} s of tracing")
+for P in PASSES:
+    print(f"{P['name']}: {P['length']:.2f} m of nozzle travel, about {P['length'] / SPEED * SCALE:.0f} s")
 if GUM:
     if call_markers(CLEAR_TEXT):
         print("Gum: ready (old gum cleared)")
@@ -214,38 +252,55 @@ if GUM:
         print("Gum: could not reach Gazebo markers (Gazebo GUI open? run `gz service -l | grep marker`). "
               "Continuing without gum.")
 move([Z_UP, 0.0, 0.0], 2, "Home")
-move([Z_UP, tilts[0], spins[0]], 5, "Position ball so the first seam point is under the nozzle")
-move([Z_WORK, tilts[0], spins[0]], 3, "Lower nozzle to working gap")
-mark = len(sent)
-print("Tracing seams: cups spin + cradle tilts, gum bead follows the nozzle")
-trace()
-traced = sent[mark:]
+marks, ends = [], []
+for pi, P in enumerate(PASSES):
+    if pi > 0:
+        move([Z_UP, PASSES[pi - 1]["tilts"][-1], PASSES[pi - 1]["spins"][-1]], 3, "Raise nozzle")
+        move([Z_UP, 0.0, 0.0], 6, "Return cups to centre")
+        reclamp_to(P["angle"], 8, f"RE-CLAMP: release the ball, turn it {math.degrees(P['angle']):.0f} deg, grip the other panel pair")
+    print(f"{P['name']}: position ball so the first seam point is under the nozzle")
+    move([Z_UP, P["tilts"][0], P["spins"][0]], 5, "Position ball")
+    move([Z_WORK, P["tilts"][0], P["spins"][0]], 3, "Lower nozzle to working gap")
+    marks.append(len(sent))
+    print("Tracing seams: cups spin + cradle tilts, gum only on glue edges, valve closed while travelling")
+    trace(pi, P)
+    ends.append(len(sent))
 if gum is not None:
     gum.done = True
     gum.join(timeout=60)
     print(f"Gum: {gum.count} bead markers placed" + ("" if gum.ok else " (some batches failed)"))
-move([Z_UP, tilts[-1], spins[-1]], 3, "Raise nozzle")
+last = PASSES[-1]
+move([Z_UP, last["tilts"][-1], last["spins"][-1]], 3, "Raise nozzle")
 move([Z_UP, 0.0, 0.0], 8, "Return home")
+if RECLAMP:
+    reclamp_to(0.0, 6, "Release ball back to start position")
 print("Done  (remove the gum with:  python3 seam_gum_sequence.py --clear)")
 
 # ---------------------------------------------------------------- self-checks (dry run only)
 if DRY:
+    def nozzle_pt(t, sp):
+        x, y, zz = -math.sin(t), 0.0, math.cos(t)          # world top as seen from the cup frame
+        return (x, math.cos(sp) * y + math.sin(sp) * zz, -math.sin(sp) * y + math.cos(sp) * zz)
     worst = 0.0
-    for z, t, sp, _ in traced:
-        x, y, zz = -math.sin(t), 0.0, math.cos(t)          # world top as seen from the ball frame
-        q = (x, math.cos(sp) * y + math.sin(sp) * zz, -math.sin(sp) * y + math.cos(sp) * zz)
-        worst = max(worst, min(math.acos(max(-1.0, min(1.0, dot(q, p)))) for p in pts))
-    print(f"DRY RUN: {len(sent)} commands; nozzle stays within {worst * R * 1000:.2f} mm of a route sample")
+    for pi, P in enumerate(PASSES):
+        for s in sent[marks[pi]:ends[pi]]:
+            q = nozzle_pt(s[1], s[2])
+            worst = max(worst, min(ang(q, p) for p in P["cpts"]))
+    print(f"DRY RUN: {len(sent)} commands, {NJ} joints each; nozzle stays within {worst * R * 1000:.2f} mm of a route sample")
+    print(f"DRY RUN: max tilt used {max(abs(s[1]) for s in sent):.3f} rad (limit 0.9), "
+          f"max cup spin {max(abs(s[2]) for s in sent):.2f} rad (limit 12.6), "
+          f"z range {min(s[0] for s in sent):.3f}..{max(s[0] for s in sent):.3f} m")
+    if RECLAMP:
+        print(f"DRY RUN: re-clamp joint used {min(s[4] for s in sent):.3f}..{max(s[4] for s in sent):.3f} rad")
     if GUM:
         beads = [m for txt in sent_markers for m in txt.split("marker {")[1:]]
-        print(f"DRY RUN: {len(beads)} bead markers in {len(sent_markers)} requests (incl. the clear request)")
-        # each bead was emitted while the nozzle was within 1.5 cm of its position (nozzle point == route)
+        expect = sum(sum(P["gum"]) for P in PASSES)
+        print(f"DRY RUN: {len(beads)} bead markers in {len(sent_markers)} requests (incl. the clear request); "
+              f"samples flagged for gum: {expect}")
         bad = 0
-        for k, cmd_idx in bead_log:
-            z, t, sp, _ = sent[cmd_idx - 1]
-            x, y, zz = -math.sin(t), 0.0, math.cos(t)
-            q = (x, math.cos(sp) * y + math.sin(sp) * zz, -math.sin(sp) * y + math.cos(sp) * zz)
-            if math.acos(max(-1.0, min(1.0, dot(q, pts[k])))) * R > 0.015:
+        for pi, k, cmd_idx in bead_log:
+            s = sent[cmd_idx - 1]
+            if ang(nozzle_pt(s[1], s[2]), PASSES[pi]["cpts"][k]) * R > 0.015 * K:
                 bad += 1
         print(f"DRY RUN: beads dropped away from the nozzle: {bad}")
 else:
