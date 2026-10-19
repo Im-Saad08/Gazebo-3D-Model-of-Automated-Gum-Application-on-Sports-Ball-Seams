@@ -32,6 +32,8 @@ BALL_X = 0.25          # ball centre in that link's frame (x)
 BEAD_RADIUS = 0.2215   # bead centre distance from ball centre (ball radius is 0.22)
 BEAD_SIZE = 0.010      # bead diameter, metres
 BATCH_SECONDS = 0.4    # how often new beads are pushed to Gazebo
+LINE_SIZE = 0.006      # glue line thickness, metres (x machine scale = 3 mm)
+GLUE_STYLE = "beads" if "--beads" in sys.argv else "line"     # default: one continuous glue line, like real glue
 if _parent_override:
     PARENT = _parent_override[0]     # e.g. --parent=football_gumming_machine::left_cup
 
@@ -45,6 +47,40 @@ def marker_text(bead_id, p):
             f'material {{ ambient {{ r: 0.95 g: 0.70 b: 0.05 a: 1 }} '
             f'diffuse {{ r: 0.95 g: 0.70 b: 0.05 a: 1 }} '
             f'emissive {{ r: 0.30 g: 0.20 b: 0.0 a: 1 }} }} }}')
+
+GLUE_MATERIAL = ('material { ambient { r: 0.95 g: 0.70 b: 0.05 a: 1 } diffuse { r: 0.95 g: 0.70 b: 0.05 a: 1 } '
+                 'emissive { r: 0.30 g: 0.20 b: 0.0 a: 1 } }')
+
+def seg_len(p0, p1):
+    return BEAD_RADIUS * math.sqrt(sum((a - b) ** 2 for a, b in zip(p0, p1)))
+
+def segment_text(seg_id, p0, p1):
+    """One short cylinder laid along the seam from p0 to p1 (ball frame). Joined end to end they make one smooth glue line."""
+    mid = [(a + b) / 2.0 for a, b in zip(p0, p1)]
+    n = math.sqrt(sum(v * v for v in mid)) or 1.0
+    mid = [v / n for v in mid]                                   # keep the middle on the ball surface
+    d = [(b - a) for a, b in zip(p0, p1)]
+    L = math.sqrt(sum(v * v for v in d)) or 1e-9
+    d = [v / L for v in d]
+    qx, qy, qz, qw = -d[1], d[0], 0.0, 1.0 + d[2]                # turns the cylinder's z axis onto the segment direction
+    if qw < 1e-6:
+        qx, qy, qz, qw = 1.0, 0.0, 0.0, 0.0
+    qn = math.sqrt(qx * qx + qy * qy + qz * qz + qw * qw)
+    qx, qy, qz, qw = qx / qn, qy / qn, qz / qn, qw / qn
+    x, y, z = BALL_X + BEAD_RADIUS * mid[0], BEAD_RADIUS * mid[1], BEAD_RADIUS * mid[2]
+    length = seg_len(p0, p1) * 1.15                              # small overlap so no gaps show on curves
+    return (f'marker {{ ns: "gum" id: {seg_id} action: ADD_MODIFY type: CYLINDER '
+            f'parent: "{PARENT}" '
+            f'pose {{ position {{ x: {x:.5f} y: {y:.5f} z: {z:.5f} }} '
+            f'orientation {{ x: {qx:.6f} y: {qy:.6f} z: {qz:.6f} w: {qw:.6f} }} }} '
+            f'scale {{ x: {LINE_SIZE} y: {LINE_SIZE} z: {length:.6f} }} {GLUE_MATERIAL} }}')
+
+def cap_text(seg_id, p):
+    """Round start of a glue line."""
+    x, y, z = BALL_X + BEAD_RADIUS * p[0], BEAD_RADIUS * p[1], BEAD_RADIUS * p[2]
+    return (f'marker {{ ns: "gum" id: {seg_id} action: ADD_MODIFY type: SPHERE parent: "{PARENT}" '
+            f'pose {{ position {{ x: {x:.5f} y: {y:.5f} z: {z:.5f} }} }} '
+            f'scale {{ x: {LINE_SIZE} y: {LINE_SIZE} z: {LINE_SIZE} }} {GLUE_MATERIAL} }}')
 
 CLEAR_TEXT = 'marker { ns: "gum" action: DELETE_ALL }'
 sent_markers = []      # (dry run) every request text
@@ -63,6 +99,7 @@ def call_markers(text):
     except Exception:
         return False
 
+SEG_LOG = []           # (dry run) every glue-line segment, to check the line has no gaps
 BATCH_MIN, BATCH_MAX = 40, 200          # beads per request (grows when the sender falls behind)
 MAX_BACKLOG, RESUME_BACKLOG = 150, 50   # if this many beads are waiting, the nozzle pauses until Gazebo catches up
 
@@ -81,8 +118,14 @@ class GumSender(threading.Thread):
         self.failed = 0
         self.slowest = 0.0
 
-    def add(self, bead_id, p):
-        t = marker_text(bead_id, p)
+    def add(self, bead_id, p, prev=None):
+        if GLUE_STYLE == "beads":
+            t = marker_text(bead_id, p)
+        elif prev is None:
+            t = cap_text(bead_id, p)
+        else:
+            t = segment_text(bead_id, prev, p)
+            SEG_LOG.append((prev, p))
         with self.lock:
             self.pending.append((bead_id, t))
             self.allbeads[bead_id] = t
@@ -145,7 +188,7 @@ K = route.get("machine_scale", R / 0.22)   # machine scale (constants above were
 # ball size changes only the ball: cup spacing and nozzle working height follow the ball radius
 BALL_X = R + 0.03 * K
 BEAD_RADIUS = R + 0.0015 * K
-BEAD_SIZE *= K; SPEED *= K; Z_UP *= K; LIFT *= K
+BEAD_SIZE *= K; LINE_SIZE *= K; SPEED *= K; Z_UP *= K; LIFT *= K
 Z_WORK = Z_WORK * K + (R - 0.22 * K)
 TILT_VMAX, SPIN_VMAX, Z_VMAX, RC_VMAX = 1.0, 3.0, 0.15 * K, 0.8     # joint speed limits in the URDF
 
@@ -282,6 +325,8 @@ def send(z, tilt, spin):
     publish(state)
 
 CYCLE = [0.0]
+T_START = time.time()
+ZPCT = []                # Z lift check per clamp, in percent
 
 STALLED = [0.0]          # seconds the nozzle waited for the gum to catch up
 
@@ -356,7 +401,8 @@ def trace(pi, P):
         k0, k1 = k, j
         length = sum(R * ang(pts[m], pts[m + 1]) for m in range(k0, k1))
         nxt = [k0]
-        def fn(u, k0=k0, k1=k1, glue=glue, nxt=nxt):
+        lastp = [None]                                   # previous glue point of this stroke (None = stroke start)
+        def fn(u, k0=k0, k1=k1, glue=glue, nxt=nxt, lastp=lastp):
             f = k0 + u * (k1 - k0)
             i = min(int(f), k1 - 1)
             r = f - i
@@ -372,8 +418,14 @@ def trace(pi, P):
                     if key not in placed:
                         placed.add(key)
                         bead_id[0] += 1
-                        gum.add(bead_id[0], pts[nxt[0]])
+                        gum.add(bead_id[0], pts[nxt[0]], lastp[0])
+                        lastp[0] = pts[nxt[0]]
                         bead_log.append((pi, nxt[0], len(sent)))
+                    else:                            # already glued here (a junction): the line passes through and continues
+                        if lastp[0] is not None:
+                            bead_id[0] += 1
+                            gum.add(bead_id[0], pts[nxt[0]], lastp[0])
+                        lastp[0] = pts[nxt[0]]
                 nxt[0] += 1
         run(length / SPEED, fn)
         if glue:
@@ -420,6 +472,7 @@ for pi, P in enumerate(PASSES):
         if len(UPS) >= 3 and len(DNS) >= 3:
             up, dn = sorted(UPS)[len(UPS) // 2], sorted(DNS)[len(DNS) // 2]
             ach = (up - dn) * 1000
+            ZPCT.append(ach / (LIFT * 1000) * 100)
             print(f"Z TRACKING ({P['name']}): commanded lift {LIFT * 1000:.0f} mm, nozzle actually rose {ach:.1f} mm "
                   f"({ach / (LIFT * 1000) * 100:.0f}%)  [{len(UPS)} lifts]")
         else:
@@ -429,7 +482,7 @@ if gum is not None:
     behind = gum.backlog()
     gum.done = True
     gum.join(timeout=120)
-    print(f"Gum: {gum.count} bead markers delivered in {gum.calls} requests (slowest {gum.slowest:.1f} s, "
+    print(f"Gum: {gum.count} glue {'bead' if GLUE_STYLE == 'beads' else 'line'} markers delivered in {gum.calls} requests (slowest {gum.slowest:.1f} s, "
           f"{gum.failed} failed/retried, {behind} beads still queued when the nozzle finished, "
           f"nozzle waited {STALLED[0]:.0f} s for Gazebo)")
     if not DRY:
@@ -442,6 +495,31 @@ if RECLAMP:
     reclamp_to(0.0, 6, "Release ball back to start position")
 print(f"Cycle time: {CYCLE[0]:.0f} s ({CYCLE[0] / 60:.1f} min) at normal speed for ball size {route.get('ball_size', '?')}"
       f"  (manual: about 5 min per ball)")
+RECORD_COLUMNS = ["time", "run", "ball", "size", "result", "edges_glued", "edges_total", "passes", "cycle_s",
+                  "wall_s", "glue_markers", "z_lift_pct", "time_scale", "glue_style"]
+def save_record():
+    """One row per finished run, shared with the panel's RECORDS screen."""
+    if DRY or CLEAR_ONLY:
+        return
+    try:
+        rec_dir = Path(__file__).resolve().parent / "records"
+        rec_dir.mkdir(exist_ok=True)
+        f = rec_dir / "runs.csv"
+        new = not f.exists()
+        row = [time.strftime("%Y-%m-%d %H:%M:%S"), "full" if NEDGES >= 10 ** 6 else "short",
+               route.get("ball_type", "football"), route.get("ball_size", "?"), "COMPLETED",
+               PROG_BASE[0], PROG_TOTAL, len(PASSES), f"{CYCLE[0]:.0f}", f"{time.time() - T_START:.0f}",
+               gum.count if gum is not None else 0, f"{min(ZPCT):.0f}" if ZPCT else "", SCALE, GLUE_STYLE if GUM else "none"]
+        with open(f, "a", newline="") as fh:
+            import csv
+            w = csv.writer(fh)
+            if new:
+                w.writerow(RECORD_COLUMNS)
+            w.writerow(row)
+        print(f"Record saved: {f}")
+    except Exception as exc:
+        print(f"Record could not be saved: {exc}")
+save_record()
 print("Done  (remove the gum with:  python3 seam_gum_sequence.py --clear)")
 
 # ---------------------------------------------------------------- self-checks (dry run only)
@@ -475,6 +553,12 @@ if DRY:
             if ang(nozzle_pt(s[1], s[2]), PASSES[pi]["cpts"][k]) * R > 0.015 * K:
                 bad += 1
         print(f"DRY RUN: beads dropped away from the nozzle: {bad}")
+        if GLUE_STYLE == "line":
+            tot = sum(seg_len(a, b) for a, b in SEG_LOG)
+            gaps = sum(1 for (a0, a1), (b0, b1) in zip(SEG_LOG[:-1], SEG_LOG[1:]) if a1 != b0 and ang(a1, b0) * R < 0.0005)
+            exp = sum(R * ang(P["pts"][m], P["pts"][m + 1]) for P in PASSES for m in range(len(P["gum"]) - 1) if P["gum"][m])
+            print(f"DRY RUN: glue line = {len(SEG_LOG)} segments, {tot:.3f} m long (seam samples flagged for gum: {exp:.3f} m); "
+                  f"longest segment {max(seg_len(a, b) for a, b in SEG_LOG) * 1000:.1f} mm, line thickness {LINE_SIZE * 1000:.1f} mm")
         excess = [sent[ci - 1][0] - Z_WORK for pi, k, ci in bead_log]
         print(f"DRY RUN: highest nozzle position while dropping a bead: {max(excess) * 1000:.2f} mm above working height "
               f"({sum(1 for e in excess if e > 0.001 * K)} beads above 1 mm)")

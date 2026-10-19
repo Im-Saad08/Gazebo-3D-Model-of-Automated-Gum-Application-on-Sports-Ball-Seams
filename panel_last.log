@@ -1,11 +1,11 @@
 
 --- full ---
-Simulation speed -> time scale 1.0
-Clamp 1: cups on pentagon pair A: 4.20 m of nozzle travel, about 105 s
-Clamp 2: re-clamp onto hexagon pair: 1.74 m of nozzle travel, about 44 s
+Simulation speed -> time scale 2.7
+Clamp 1: cups on pentagon pair A: 3.93 m of nozzle travel, about 266 s
+Clamp 2: re-clamp onto hexagon pair: 1.63 m of nozzle travel, about 110 s
 Gum: ready (old gum cleared)
 PROGRESS glued=0/90
-Settings: nozzle 40 mm/s, lift 20 mm, lift/lower 0.6 s + 0.5 s hold, time scale 1.0
+Settings: nozzle 40 mm/s, lift 20 mm, lift/lower 0.6 s + 0.5 s hold, time scale 2.7
 Home
 Clamp 1: cups on pentagon pair A: position ball so the first seam point is under the nozzle
 Position ball
@@ -108,10 +108,14 @@ PROGRESS glued=89/90
 PROGRESS glued=90/90
 PASS 2 of 2 finished: 90 of 90 seam edges glued.
 Z TRACKING (Clamp 2: re-clamp onto hexagon pair): commanded lift 20 mm, nozzle actually rose 20.0 mm (100%)  [9 lifts]
-Gum: 700 bead markers delivered in 129 requests (slowest 3.4 s, 1 failed/retried, 6 beads still queued when the nozzle finished, nozzle waited 0 s for Gazebo)
-Gum: final refresh of all 700 beads done
+Gum: 723 glue line markers delivered in 269 requests (slowest 3.5 s, 6 failed/retried, 1 beads still queued when the nozzle finished, nozzle waited 0 s for Gazebo)
+Gum: final refresh of all 723 beads done
 Raise nozzle
 Return home
 Release ball back to start position
-Cycle time: 262 s (4.4 min) at normal speed for ball size 5  (manual: about 5 min per ball)
+Cycle time: 253 s (4.2 min) at normal speed for ball size 4  (manual: about 5 min per ball)
+Record saved: /home/pc/FYP_ball_gum/records/runs.csv
 Done  (remove the gum with:  python3 seam_gum_sequence.py --clear)
+
+--- stop ---
+Everything closed.

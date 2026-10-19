@@ -5,6 +5,7 @@
 #   demo.sh short    run the short gum demo (12 seams)
 #   demo.sh full     run the full seam loop with gum
 #   demo.sh clear    remove the gum from the ball
+#   demo.sh select B N  set up the machine for ball B (football) of size N, then restart the simulation
 #   demo.sh stop     close Gazebo and everything else
 #   demo.sh status   is the simulation running?
 #   demo.sh backup   copy the project to Windows (Documents\FYP_backup\...)
@@ -27,6 +28,7 @@ controllers_ready() {
 }
 
 stop_all() {
+  pkill -9 -f "seam_gum_sequence.py" 2>/dev/null     # a stopped run must not keep moving or save a record
   pkill -9 -f "ros2 launch" 2>/dev/null
   pkill -9 -f "gz sim" 2>/dev/null
   pkill -9 -f ruby 2>/dev/null
@@ -93,6 +95,26 @@ do_run() {   # $1 = number of seam edges (empty = whole loop)
   python3 "$WS/seam_gum_sequence.py" "$scale" $1
 }
 
+do_select() {   # $1 = ball type, $2 = size: rebuild the machine model for that ball and restart the simulation
+  local ball="${1:-football}" size="${2:-5}"
+  load_env
+  echo "Setting up the machine for: $ball, size $size ..."
+  if ! python3 "$WS/gen_machine.py" --reclamp --ball="$ball" --ball-size="$size" \
+        "$WS/src/football_gumming_sim/urdf/football_gumming.urdf.xacro" "$WS/seam_path.json"; then
+    echo "FAILED: could not generate the model for $ball size $size"
+    exit 3
+  fi
+  echo "Rebuilding the package (about 15 seconds)..."
+  if ! ( cd "$WS" && colcon build --symlink-install ) > "$WS/build.log" 2>&1; then
+    echo "FAILED: build error (details in build.log):"
+    tail -n 8 "$WS/build.log"
+    exit 4
+  fi
+  load_env
+  echo "SELECTED: $ball size $size"
+  do_start
+}
+
 do_clear() {
   load_env
   python3 "$WS/seam_gum_sequence.py" --clear
@@ -137,6 +159,7 @@ case "$1" in
   short)  do_run 12 ;;
   full)   do_run "" ;;
   clear)  do_clear ;;
+  select) do_select "$2" "$3" ;;
   stop)   stop_all; echo "Everything closed." ;;
   status) do_status ;;
   backup) do_backup ;;
