@@ -63,36 +63,74 @@ def call_markers(text):
     except Exception:
         return False
 
+BATCH_MIN, BATCH_MAX = 40, 200          # beads per request (grows when the sender falls behind)
+MAX_BACKLOG, RESUME_BACKLOG = 150, 50   # if this many beads are waiting, the nozzle pauses until Gazebo catches up
+
 class GumSender(threading.Thread):
-    """Pushes beads to Gazebo in batches so the motion loop never waits for the gz tool."""
+    """Pushes beads to Gazebo in batches so the motion loop never waits for the gz tool.
+    Failed batches are retried, and every bead is remembered so the whole gum can be re-sent at the end."""
     def __init__(self):
         super().__init__(daemon=True)
         self.lock = threading.Lock()
         self.pending = []
+        self.allbeads = {}
         self.done = False
         self.ok = True
         self.count = 0
+        self.calls = 0
+        self.failed = 0
+        self.slowest = 0.0
 
     def add(self, bead_id, p):
+        t = marker_text(bead_id, p)
         with self.lock:
-            self.pending.append(marker_text(bead_id, p))
+            self.pending.append((bead_id, t))
+            self.allbeads[bead_id] = t
+
+    def backlog(self):
+        with self.lock:
+            return len(self.pending)
 
     def run(self):
+        tries = 0
         while True:
             with self.lock:
-                batch, self.pending = self.pending[:60], self.pending[60:]
+                n = min(BATCH_MAX, max(BATCH_MIN, len(self.pending)))
+                batch, self.pending = self.pending[:n], self.pending[n:]
                 finished = self.done and not self.pending
             if batch:
-                if call_markers(" ".join(batch)):
+                t0 = time.monotonic()
+                ok = call_markers(" ".join(t for _, t in batch))
+                self.calls += 1
+                self.slowest = max(self.slowest, time.monotonic() - t0)
+                if ok:
                     self.count += len(batch)
+                    tries = 0
                 else:
-                    self.ok = False
+                    self.failed += 1
+                    tries += 1
+                    if tries <= 3:
+                        with self.lock:
+                            self.pending = batch + self.pending      # same beads again
+                    else:
+                        self.ok = False
+                        tries = 0
             elif finished:
                 return
             if not DRY:
-                time.sleep(BATCH_SECONDS)
+                if self.backlog() < BATCH_MIN:
+                    time.sleep(BATCH_SECONDS)
             elif not batch:
                 time.sleep(0.001)
+
+def refresh_all(g):
+    """Send every bead again (same ids, so nothing is duplicated). Heals any batch Gazebo dropped."""
+    items = [g.allbeads[k] for k in sorted(g.allbeads)]
+    bad = 0
+    for i in range(0, len(items), 100):
+        if not call_markers(" ".join(items[i:i + 100])):
+            bad += 1
+    return bad
 
 if CLEAR_ONLY:
     print("Gum cleared" if call_markers(CLEAR_TEXT) else "Could not reach Gazebo markers (is Gazebo open?)")
@@ -161,9 +199,10 @@ def prepare(ps):
     C = [tuple(v) for v in ps.get("cup_vertices", ps["vertices"])]
     G = ps.get("gum") or [True] * (len(V) - 1)
     ne = min(NEDGES, len(V) - 1)
-    pts, cpts, gfl = [], [], []
+    pts, cpts, gfl, estart = [], [], [], []
     for e in range(ne):
         n = max(2, int(ang(V[e], V[e + 1]) / STEP))
+        estart.append((len(pts), bool(G[e])))
         for k in range(n):
             pts.append(slerp(V[e], V[e + 1], k / n))      # football frame (where the bead sticks)
             cpts.append(slerp(C[e], C[e + 1], k / n))     # cup frame (what the nozzle must reach)
@@ -190,7 +229,8 @@ def prepare(ps):
         i = j
     length = sum(R * ang(a, b) for a, b in zip(pts[:-1], pts[1:]))
     return {"name": ps.get("name", "pass"), "angle": ps.get("reclamp_angle", 0.0), "pts": pts, "cpts": cpts,
-            "gum": gfl, "lift": lift, "tilts": tilts, "spins": spins, "length": length}
+            "gum": gfl, "lift": lift, "tilts": tilts, "spins": spins, "length": length,
+            "estart": estart, "n_glue": sum(1 for _, g_ in estart if g_)}
 
 PASSES = [prepare(ps) for ps in RAW_PASSES]
 
@@ -243,17 +283,20 @@ def send(z, tilt, spin):
 
 CYCLE = [0.0]
 
+STALLED = [0.0]          # seconds the nozzle waited for the gum to catch up
+
 def run(seconds, fn):
     """Call fn(u) for u in 0..1 over `seconds` (scaled), at HZ."""
     CYCLE[0] += seconds
     seconds *= SCALE
     n = max(1, int(seconds * HZ))
     t0 = time.monotonic()
+    base = STALLED[0]
     for i in range(1, n + 1):
         fn(i / n)
         _poll()
         if not DRY:
-            time.sleep(max(0.0, t0 + i / HZ - time.monotonic()))
+            time.sleep(max(0.0, t0 + i / HZ + (STALLED[0] - base) - time.monotonic()))
 
 def ease(u):
     return u * u * (3 - 2 * u)
@@ -291,6 +334,9 @@ def z_move(target, label_up):
     if not DRY and ACTUAL_Z[0] is not None:
         (UPS if label_up else DNS).append(ACTUAL_Z[0])
 
+PROG_TOTAL = sum(P_["n_glue"] for P_ in PASSES)      # glue edges in this run (90 for the full loop)
+PROG_BASE = [0]                                      # glue edges finished in earlier passes
+
 def trace(pi, P):
     """Glue edges: nozzle DOWN on the seam.  Travel edges: nozzle stops, LIFTS, moves over the wet gum,
     stops, LOWERS, then continues.  The lift never depends on how fast the nozzle moves."""
@@ -317,6 +363,11 @@ def trace(pi, P):
             send(target, tilts[i] + (tilts[i + 1] - tilts[i]) * r, spins[i] + (spins[i + 1] - spins[i]) * r)
             while nxt[0] <= f + 1e-9 and nxt[0] <= k1:
                 if glue and gum is not None:
+                    if not DRY and gum.backlog() > MAX_BACKLOG:       # Gazebo is behind: hold the nozzle
+                        w0 = time.monotonic()
+                        while gum.backlog() > RESUME_BACKLOG and time.monotonic() - w0 < 30:
+                            time.sleep(0.05)
+                        STALLED[0] += time.monotonic() - w0
                     key = tuple(round(v, 4) for v in pts[nxt[0]])
                     if key not in placed:
                         placed.add(key)
@@ -325,6 +376,9 @@ def trace(pi, P):
                         bead_log.append((pi, nxt[0], len(sent)))
                 nxt[0] += 1
         run(length / SPEED, fn)
+        if glue:
+            done_here = sum(1 for st, g_ in P["estart"] if g_ and st < j)
+            print(f"PROGRESS glued={PROG_BASE[0] + done_here}/{PROG_TOTAL}", flush=True)
         k = j
 
 # ---------------------------------------------------------------- the show
@@ -340,6 +394,7 @@ if GUM:
     else:
         print("Gum: could not reach Gazebo markers (Gazebo GUI open? run `gz service -l | grep marker`). "
               "Continuing without gum.")
+print(f"PROGRESS glued=0/{PROG_TOTAL}", flush=True)
 print(f"Settings: nozzle {SPEED * 1000:.0f} mm/s, lift {LIFT * 1000:.0f} mm, lift/lower {Z_TIME:.1f} s + {Z_HOLD:.1f} s hold, time scale {SCALE}")
 move([Z_UP, 0.0, 0.0], 2, "Home")
 marks, ends = [], []
@@ -354,7 +409,13 @@ for pi, P in enumerate(PASSES):
     marks.append(len(sent))
     print("Tracing seams: nozzle touches only unglued seams, lifts while travelling over glued ones")
     trace(pi, P)
+    PROG_BASE[0] += P["n_glue"]
     ends.append(len(sent))
+    _tot = route.get("total_edges", 90)
+    _done = sum(sum(1 for f in (rp.get("gum") or []) if f) for rp in RAW_PASSES[:pi + 1])
+    print(f"PASS {pi + 1} of {len(PASSES)} finished: {_done} of {_tot} seam edges glued." +
+          (f" The other {_tot - _done} edges are hidden under and around the cups; they are glued after the re-clamp."
+           if pi + 1 < len(PASSES) else ""))
     if not DRY:
         if len(UPS) >= 3 and len(DNS) >= 3:
             up, dn = sorted(UPS)[len(UPS) // 2], sorted(DNS)[len(DNS) // 2]
@@ -365,9 +426,15 @@ for pi, P in enumerate(PASSES):
             print("Z TRACKING: no usable /joint_states data (is joint_state_broadcaster running?)")
     UPS.clear(); DNS.clear()
 if gum is not None:
+    behind = gum.backlog()
     gum.done = True
-    gum.join(timeout=60)
-    print(f"Gum: {gum.count} bead markers placed" + ("" if gum.ok else " (some batches failed)"))
+    gum.join(timeout=120)
+    print(f"Gum: {gum.count} bead markers delivered in {gum.calls} requests (slowest {gum.slowest:.1f} s, "
+          f"{gum.failed} failed/retried, {behind} beads still queued when the nozzle finished, "
+          f"nozzle waited {STALLED[0]:.0f} s for Gazebo)")
+    if not DRY:
+        bad = refresh_all(gum)
+        print("Gum: final refresh of all " + str(len(gum.allbeads)) + " beads " + ("done" if not bad else f"had {bad} failed requests"))
 last = PASSES[-1]
 move([Z_UP, last["tilts"][-1], last["spins"][-1]], 3, "Raise nozzle")
 move([Z_UP, 0.0, 0.0], 8, "Return home")

@@ -1,0 +1,117 @@
+
+--- full ---
+Simulation speed -> time scale 1.0
+Clamp 1: cups on pentagon pair A: 4.20 m of nozzle travel, about 105 s
+Clamp 2: re-clamp onto hexagon pair: 1.74 m of nozzle travel, about 44 s
+Gum: ready (old gum cleared)
+PROGRESS glued=0/90
+Settings: nozzle 40 mm/s, lift 20 mm, lift/lower 0.6 s + 0.5 s hold, time scale 1.0
+Home
+Clamp 1: cups on pentagon pair A: position ball so the first seam point is under the nozzle
+Position ball
+Lower nozzle to working gap
+Tracing seams: nozzle touches only unglued seams, lifts while travelling over glued ones
+PROGRESS glued=15/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=17/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=18/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=38/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=46/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=47/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=48/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=49/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=51/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=52/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=53/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=57/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=58/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=60/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=62/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=63/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=67/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=68/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=69/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=70/90
+PASS 1 of 2 finished: 70 of 90 seam edges glued. The other 20 edges are hidden under and around the cups; they are glued after the re-clamp.
+Z TRACKING (Clamp 1: cups on pentagon pair A): commanded lift 20 mm, nozzle actually rose 20.0 mm (100%)  [19 lifts]
+Raise nozzle
+Return cups to centre
+RE-CLAMP: release the ball, turn it 79 deg, grip the other panel pair
+Clamp 2: re-clamp onto hexagon pair: position ball so the first seam point is under the nozzle
+Position ball
+Lower nozzle to working gap
+Tracing seams: nozzle touches only unglued seams, lifts while travelling over glued ones
+PROGRESS glued=76/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=77/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=78/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=79/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=80/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=86/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=87/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=88/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=89/90
+  nozzle UP: crossing glued seam
+  nozzle DOWN onto unglued seam
+PROGRESS glued=90/90
+PASS 2 of 2 finished: 90 of 90 seam edges glued.
+Z TRACKING (Clamp 2: re-clamp onto hexagon pair): commanded lift 20 mm, nozzle actually rose 20.0 mm (100%)  [9 lifts]
+Gum: 700 bead markers delivered in 129 requests (slowest 3.4 s, 1 failed/retried, 6 beads still queued when the nozzle finished, nozzle waited 0 s for Gazebo)
+Gum: final refresh of all 700 beads done
+Raise nozzle
+Return home
+Release ball back to start position
+Cycle time: 262 s (4.4 min) at normal speed for ball size 5  (manual: about 5 min per ball)
+Done  (remove the gum with:  python3 seam_gum_sequence.py --clear)

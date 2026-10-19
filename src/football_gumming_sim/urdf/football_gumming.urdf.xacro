@@ -329,9 +329,9 @@
   <joint name="z_axis_joint" type="prismatic">
     <parent link="nozzle_rail"/><child link="z_carriage"/>
     <origin xyz="0 -0.033 0.075"/>
-    <axis xyz="0 0 0.5"/>
-    <limit lower="-0.1000" upper="0.0500" effort="60" velocity="0.0750"/>
-    <dynamics damping="4.0" friction="0.2"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.1000" upper="0.0500" effort="1000" velocity="10"/>
+    <dynamics damping="0.5" friction="0.0"/>
   </joint>
 
   <link name="nozzle_body">
@@ -391,7 +391,7 @@
   <joint name="tilt_joint" type="revolute">
     <parent link="base_link"/><child link="tilt_link"/>
     <origin xyz="0 0 0.4"/>
-    <axis xyz="0 0.5 0"/>
+    <axis xyz="0 1 0"/>
     <limit lower="-0.9" upper="0.9" effort="200" velocity="1.0"/>
     <dynamics damping="2.0" friction="0.1"/>
   </joint>
@@ -405,7 +405,7 @@
   <joint name="left_cup_joint" type="revolute">
     <parent link="tilt_link"/><child link="left_cup"/>
     <origin xyz="-0.125 0 0"/>
-    <axis xyz="0.5 0 0"/>
+    <axis xyz="1 0 0"/>
     <limit lower="-12.6" upper="12.6" effort="50" velocity="3.0"/>
     <dynamics damping="1.0" friction="0.05"/>
   </joint>
@@ -419,7 +419,7 @@
   <joint name="right_cup_joint" type="revolute">
     <parent link="tilt_link"/><child link="right_cup"/>
     <origin xyz="0.125 0 0"/>
-    <axis xyz="0.5 0 0"/>
+    <axis xyz="1 0 0"/>
     <limit lower="-12.6" upper="12.6" effort="50" velocity="3.0"/>
     <dynamics damping="1.0" friction="0.05"/>
   </joint>
@@ -701,7 +701,7 @@
   </link>
   <joint name="reclamp_joint" type="revolute">
     <parent link="left_cup"/><child link="football"/><origin xyz="0.125 0 0"/>
-    <axis xyz="0 -0.0373375 0.498604"/>
+    <axis xyz="0.000000 -0.074675 0.997208"/>
     <limit lower="0" upper="1.4021" effort="50" velocity="0.8"/>
     <dynamics damping="1.0" friction="0.05"/>
   </joint>
@@ -720,4 +720,6 @@
       <position_proportional_gain>0.4</position_proportional_gain>
     </plugin>
   </gazebo>
+  <gazebo reference="z_carriage"><gravity>false</gravity></gazebo>
+  <gazebo reference="nozzle_body"><gravity>false</gravity></gazebo>
 </robot>
