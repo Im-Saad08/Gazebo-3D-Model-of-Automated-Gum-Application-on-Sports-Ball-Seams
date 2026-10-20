@@ -1,2 +1,4 @@
 time,run,ball,size,result,edges_glued,edges_total,passes,cycle_s,wall_s,glue_markers,z_lift_pct,time_scale,glue_style
 2026-10-20 02:25:25,full,football,4,COMPLETED,90,90,2,253,690,723,100,2.7,line
+2026-10-20 09:32:12,full,football,4,COMPLETED,90,90,2,230,237,723,100,1.0,line
+2026-10-20 10:00:03,full,volleyball,4,COMPLETED,84,84,2,184,190,642,100,1.0,line

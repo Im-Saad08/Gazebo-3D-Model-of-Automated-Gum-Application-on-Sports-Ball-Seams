@@ -6,7 +6,7 @@ RECLAMP = "--reclamp" in sys.argv
 # ---- ball catalogue: what the operator can choose (radius in metres, approx. from standard circumferences) ----
 BALL_CATALOG = {
     "football":   {"label": "Football",   "enabled": True,  "sizes": {3: 0.095, 4: 0.103, 5: 0.110}},
-    "volleyball": {"label": "Volleyball", "enabled": False, "sizes": {}},
+    "volleyball": {"label": "Volleyball", "enabled": True,  "sizes": {3: 0.0955, 4: 0.1003, 5: 0.1050}},
     "basketball": {"label": "Basketball", "enabled": False, "sizes": {}},
 }
 if "--list-balls" in sys.argv:        # the panel asks this, so new balls appear there without editing the panel
@@ -148,6 +148,90 @@ for i in range(60):
             edges.append((i, j))
 assert len(edges) == 90, len(edges)
 
+# ---------- volleyball: 18-panel pattern (6 groups of 3 strips, pinwheel) ----------
+# Group on the +/-z faces runs its strips along x, the +/-x faces along y, the +/-y faces along z. The seams are the
+# 12 cube-edge arcs (where the groups meet) plus 2 separators inside each group -> 32 junctions, 48 seams, 18 panels.
+VB_S = (1 / math.sqrt(3)) / 3                    # separator offset: 3 strips of equal width at the group ends
+VB_NEXT = {2: 0, 0: 1, 1: 2}                     # strip direction axis of a group whose normal is the key axis
+def _vb_third(a):
+    return 3 - a - VB_NEXT[a]
+
+def volleyball_geometry():
+    t0 = 1 / math.sqrt(3)
+    s = VB_S
+    index, pts = {}, []
+    def vid(p):
+        key = tuple(round(c, 6) + 0.0 for c in p)
+        if key not in index:
+            index[key] = len(pts); pts.append(norm(p))
+        return index[key]
+    def mk(a, va, b, vb, c, vc):
+        p = [0.0, 0.0, 0.0]; p[a] = va; p[b] = vb; p[c] = vc
+        return tuple(p)
+    E_ = set()
+    def link(i, j):
+        E_.add((min(i, j), max(i, j)))
+    for a in (2, 0, 1):
+        b, c = VB_NEXT[a], _vb_third(a)
+        for sa in (1, -1):
+            for sb in (1, -1):
+                chain = []
+                for cv in (-t0, -s, s, t0):          # corner, T-junction, T-junction, corner along one cube-edge arc
+                    h = math.sqrt(max(0.0, (1 - cv * cv) / 2))
+                    chain.append(vid(mk(a, sa * h, b, sb * h, c, cv)))
+                for i, j in zip(chain[:-1], chain[1:]):
+                    link(i, j)
+        t = math.sqrt((1 - s * s) / 2)
+        for sa in (1, -1):
+            for cs in (1, -1):
+                prev = None
+                for k in range(5):                   # separator plane c = +-s, split in 4 so it hugs the small circle
+                    bb = t * (1 - 2 * k / 4)
+                    ah = sa * math.sqrt(max(0.0, 1 - s * s - bb * bb))
+                    cur = vid(mk(a, ah, b, bb, c, cs * s))
+                    if prev is not None:
+                        link(prev, cur)
+                    prev = cur
+    return pts, sorted(E_)
+
+def volleyball_panel_triangles(radius, strip):
+    """Spherical mesh of the 18 panels: strip = 'middle' (6 panels) or 'outer' (12 panels)."""
+    N = 60
+    tris = []
+    def face_pt(f, u, v):
+        a = f // 2; sgn = 1 if f % 2 == 0 else -1
+        p = [0.0, 0.0, 0.0]
+        p[a] = sgn; p[(a + 1) % 3] = u; p[(a + 2) % 3] = v
+        return norm(tuple(p))
+    for f in range(6):
+        grid = []
+        for i in range(N + 1):
+            row = []
+            for j in range(N + 1):
+                u = math.tan(math.pi / 4 * (2 * i / N - 1)); v = math.tan(math.pi / 4 * (2 * j / N - 1))
+                row.append(face_pt(f, u, v))
+            grid.append(row)
+        for i in range(N):
+            for j in range(N):
+                for t in ((grid[i][j], grid[i + 1][j], grid[i + 1][j + 1]), (grid[i][j], grid[i + 1][j + 1], grid[i][j + 1])):
+                    cen = tuple(sum(q[m] for q in t) for m in range(3))
+                    a = max(range(3), key=lambda m: abs(cen[m]))
+                    mid = abs(cen[_vb_third(a)]) / math.sqrt(sum(q * q for q in cen)) < VB_S
+                    if mid != (strip == "middle"):
+                        continue
+                    t = tuple(tuple(radius * m for m in q) for q in t)
+                    nrm = cross(tuple(t[1][m] - t[0][m] for m in range(3)), tuple(t[2][m] - t[0][m] for m in range(3)))
+                    cc = tuple(sum(t[k][m] for k in range(3)) for m in range(3))
+                    if dot3(nrm, cc) < 0:
+                        t = (t[0], t[2], t[1])
+                    tris.append(t)
+    return tris
+
+if BALL_TYPE == "volleyball":
+    units, edges = volleyball_geometry()
+    R0 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    assert len(units) == 32 + 12 * 3 and len(edges) == 36 + 12 * 4, (len(units), len(edges))
+
 # --- second-clamp geometry: pick the panel-centre pair (pentagon or hexagon) whose clamp ----
 # --- makes every edge left over from clamp 1 reachable --------------------------------------
 _phi = (1 + 5 ** 0.5) / 2
@@ -172,6 +256,8 @@ for _s1 in (1, -1):
         _w = (0.0, _s1 / _phi, _s2 * _phi)
         for _p in (_w, (_w[1], _w[2], _w[0]), (_w[2], _w[0], _w[1])):
             _cands.append(("hexagon", _p))
+if BALL_TYPE == "volleyball":                     # re-clamp onto another group centre (a face of the cube)
+    _cands = [("group", (0.0, 1.0, 0.0)), ("group", (0.0, 0.0, 1.0)), ("group", (0.0, -1.0, 0.0)), ("group", (0.0, 0.0, -1.0))]
 _best = None
 for _kind, _p in _cands:
     _c = matvec(R0, norm(_p))
@@ -236,6 +322,8 @@ PALETTE = [
     # football
     ("football_white", "0.97 0.97 0.95 1"),
     ("patch_black", "0.04 0.04 0.05 1"),
+    ("vb_yellow", "0.97 0.80 0.10 1"),
+    ("vb_blue", "0.10 0.30 0.70 1"),
     ("seam_black", "0.12 0.12 0.13 1"),
     # electrics
     ("enclosure_grey", "0.80 0.81 0.80 1"),    # RAL 7035 light grey
@@ -587,7 +675,17 @@ def write_stl(path, tris):
             f.write(b"\0\0")
 
 patch_vis = ""
-if not NO_MESH:
+if not NO_MESH and BALL_TYPE == "volleyball":
+    meshdir = urdf.parent.parent / "meshes"
+    meshdir.mkdir(parents=True, exist_ok=True)
+    for _strip, _mat in (("middle", "vb_yellow"), ("outer", "vb_blue")):
+        _stl = meshdir / f"ball_panels_{_strip}.stl"
+        _tris = volleyball_panel_triangles(BALL_R + 0.0004, _strip)
+        write_stl(_stl, _tris)
+        print(f"volleyball {_strip} panels: {len(_tris)} triangles -> {_stl}")
+        patch_vis += (f'    <visual name="panels_{_strip}"><geometry><mesh filename="file://$(find football_gumming_sim)'
+                      f'/meshes/ball_panels_{_strip}.stl" scale="1 1 1"/></geometry><material name="{_mat}"/></visual>\n')
+elif not NO_MESH:
     meshdir = urdf.parent.parent / "meshes"
     meshdir.mkdir(parents=True, exist_ok=True)
     stl = meshdir / "ball_pentagons.stl"
@@ -705,44 +803,81 @@ from collections import deque
 
 I3 = _I3
 
-def plan_pass(rot, required, label):
+def plan_pass(rot, required, label, done=frozenset()):
+    """Face-by-face route. A pentagon whose 5 sides are all needed is glued as one closed loop (never left half-done);
+    the nozzle then crosses to the next pentagon along the single seam that links them. Travel (valve closed,
+    nozzle lifted) is kept to a few steps and runs over seam that is already glued."""
+    import heapq
     allowed = {e for e in edges if edge_ok(units[e[0]], units[e[1]], rot)}
     assert required <= allowed, f"{label}: {len(required - allowed)} required edges are not reachable"
     adj = {}
     for (i, j) in allowed:
-        adj.setdefault(i, []).append(j)
-        adj.setdefault(j, []).append(i)
-    def bfs(src_v, want):
-        prev = {src_v: None}
-        dq = deque([src_v])
-        while dq:
-            c = dq.popleft()
-            if want(c):
-                path = []
-                while c is not None:
-                    path.append(c)
-                    c = prev[c]
-                return path[::-1]
-            for n in sorted(adj.get(c, [])):
-                if n not in prev:
-                    prev[n] = c
-                    dq.append(n)
-        return None
+        adj.setdefault(i, []).append(j); adj.setdefault(j, []).append(i)
+    nb = {v: sorted(n) for v, n in adj.items()}
+    E = lambda a, b: (min(a, b), max(a, b))
+    # pentagon faces = the 5-cycles of the seam graph
+    full_adj = {}
+    for (i, j) in edges:
+        full_adj.setdefault(i, set()).add(j); full_adj.setdefault(j, set()).add(i)
+    rings = set()
+    for a in full_adj:
+        for b in full_adj[a]:
+            for c in full_adj[b] - {a}:
+                for d in full_adj[c] - {a, b}:
+                    for e in full_adj[d] - {a, b, c}:
+                        if a in full_adj[e]:
+                            rings.add(frozenset((a, b, c, d, e)))
+    ring_cycle = {}
+    for r in rings:
+        a = min(r); cyc = [a]; prev = None
+        while len(cyc) < 5:
+            n = [x for x in sorted(full_adj[cyc[-1]]) if x in r and x != prev and x not in cyc][0]
+            prev = cyc[-1]; cyc.append(n)
+        ring_cycle[r] = cyc
     remaining = set(required)
-    start = min({v for e in required for v in e}, key=lambda v: (abs(matvec(rot, units[v])[0]), v))
+    glued = set(done)
+    def dijkstra(src):
+        dist, prev, pq = {src: 0.0}, {src: None}, [(0.0, src)]
+        while pq:
+            d, c = heapq.heappop(pq)
+            if d > dist[c]: continue
+            for n in nb[c]:
+                nd = d + (1.0 if (E(c, n) in glued) else 6.0)
+                if nd < dist.get(n, 1e9) - 1e-9:
+                    dist[n], prev[n] = nd, c
+                    heapq.heappush(pq, (nd, n))
+        return dist, prev
+    def rings_at(v):
+        return [r for r in rings if v in r and all(E(ring_cycle[r][k], ring_cycle[r][(k + 1) % 5]) in remaining for k in range(5))]
+    def work(v):
+        return sum(E(v, m) in remaining for m in nb[v])
+    start = min({v for e in required for v in e}, key=lambda v: (abs(matvec(rot, units[v])[0]), -len(rings_at(v)), v))
     cur, route, gum = start, [start], []
-    def has_req(v):
-        return any((min(v, n), max(v, n)) in remaining for n in adj[v])
+    def glue_edge(a, b):
+        remaining.discard(E(a, b)); glued.add(E(a, b)); route.append(b); gum.append(True)
     while remaining:
-        path = bfs(cur, has_req)
-        for a, b in zip(path[:-1], path[1:]):
-            route.append(b); gum.append(False)          # travel with the valve closed
-        cur = path[-1]
-        opts = sorted(n for n in adj[cur] if (min(cur, n), max(cur, n)) in remaining)
-        # prefer the neighbour that still has the most work left (keeps the nozzle gluing, not travelling)
-        nxt = max(opts, key=lambda n: sum((min(n, m), max(n, m)) in remaining for m in adj[n]))
-        remaining.discard((min(cur, nxt), max(cur, nxt)))
-        route.append(nxt); gum.append(True); cur = nxt
+        rs = rings_at(cur)
+        if rs:                                           # glue this whole pentagon in one loop, back to where we are
+            cyc = ring_cycle[rs[0]]
+            k = cyc.index(cur)
+            order = cyc[k:] + cyc[:k] + [cur]
+            for a, b in zip(order[:-1], order[1:]):
+                glue_edge(a, b)
+            continue
+        opts = [n for n in nb[cur] if E(cur, n) in remaining]
+        if opts:                                         # cross a link seam / continue a partly glued panel
+            nxt = max(opts, key=lambda n: (len(rings_at(n)) > 0, work(n), -n))
+            glue_edge(cur, nxt); cur = nxt
+            continue
+        dist, prev = dijkstra(cur)                       # nothing to glue here: travel (lifted) to the nearest work
+        targets = [v for v in dist if work(v) and v != cur]
+        tgt = min(targets, key=lambda v: (dist[v], -len(rings_at(v)), v))
+        path, c = [], tgt
+        while c is not None:
+            path.append(c); c = prev[c]
+        for a, b in zip(path[::-1][:-1], path[::-1][1:]):
+            route.append(b); gum.append(False)
+        cur = tgt
     return route, gum
 
 def spin_range(route, rot):
@@ -757,13 +892,15 @@ def spin_range(route, rot):
 
 all_edges = {(min(i, j), max(i, j)) for i, j in edges}
 reach1 = {e for e in edges if edge_ok(units[e[0]], units[e[1]], I3)}
-passes_def = [("Clamp 1: cups on pentagon pair A", I3, reach1, 0.0)]
+_n1, _n2 = (("Clamp 1: cups on the two end panel groups", "Clamp 2: re-clamp onto the side panel groups") if BALL_TYPE == "volleyball"
+            else ("Clamp 1: cups on pentagon pair A", "Clamp 2: re-clamp onto hexagon pair"))
+passes_def = [(_n1, I3, reach1, 0.0)]
 if RECLAMP:
-    passes_def.append(("Clamp 2: re-clamp onto hexagon pair", CLAMP_ROT, all_edges - reach1, CLAMP_ANGLE))
+    passes_def.append((_n2, CLAMP_ROT, all_edges - reach1, CLAMP_ANGLE))
 
 out_passes, covered = [], {}
 for label, rot, req, ang in passes_def:
-    route, gum = plan_pass(rot, set(req), label)
+    route, gum = plan_pass(rot, set(req), label, set(covered))
     lo, hi = spin_range(route, rot)
     glued = [(min(a, b), max(a, b)) for a, b, g in zip(route[:-1], route[1:], gum) if g]
     for e in glued:
@@ -775,15 +912,15 @@ for label, rot, req, ang in passes_def:
                        "vertices": [list(units[v]) for v in route],
                        "cup_vertices": [list(matvec(rot, units[v])) for v in route],
                        "gum": gum})
-print(f"COVERAGE: {len(covered)}/90 seam edges glued, max times any edge glued: {max(covered.values())}")
+print(f"COVERAGE: {len(covered)}/{len(all_edges)} seam edges glued, max times any edge glued: {max(covered.values())}")
 assert all(c == 1 for c in covered.values())
 if not RECLAMP:
-    print("NOTE: single clamp only -> the 20 edges around the two cups stay unglued. Run with --reclamp for all 90.")
+    print(f"NOTE: single clamp only -> the edges around the two cups stay unglued. Run with --reclamp for all {len(all_edges)}.")
 
 jpath = Path(ARGS[1]) if len(ARGS) > 1 else Path.home() / "FYP_ball_gum/seam_path.json"
 p1 = out_passes[0]
 jpath.write_text(json.dumps({
-    "radius": BALL_R, "machine_scale": S, "ball_size": BALL_SIZE, "ball_type": BALL_TYPE, "ball_label": BALL_CATALOG[BALL_TYPE]["label"], "tilt_limit": TILT_LIMIT, "reclamp": RECLAMP, "closed": False,
+    "radius": BALL_R, "machine_scale": S, "ball_size": BALL_SIZE, "ball_type": BALL_TYPE, "ball_label": BALL_CATALOG[BALL_TYPE]["label"], "tilt_limit": TILT_LIMIT, "reclamp": RECLAMP, "closed": False, "total_edges": len(all_edges),
     "vertices": p1["vertices"], "gum": p1["gum"], "passes": out_passes}))
 print("route written:", jpath)
 print("URDF written:", urdf, "| ball size:", BALL_SIZE, "| ball radius:", BALL_R, "| scale:", round(S, 4), "| reclamp joint:", RECLAMP, "| controller gain:", GAIN)

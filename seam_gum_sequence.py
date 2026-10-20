@@ -200,6 +200,7 @@ if _opt("speed") is not None:
     SPEED = _opt("speed") / 1000.0
 if _opt("lift") is not None:
     LIFT = _opt("lift") / 1000.0
+TRAVEL_X = _opt("travel") if _opt("travel") is not None else 2.0      # travel (no glue) speed = this x glue speed
 RAMP = int(_opt("ramp")) if _opt("ramp") is not None else 5
 RECLAMP = bool(route.get("reclamp"))      # ball hangs on a re-clamp joint -> controller has 5 joints
 NJ = 5 if RECLAMP else 4
@@ -427,7 +428,7 @@ def trace(pi, P):
                             gum.add(bead_id[0], pts[nxt[0]], lastp[0])
                         lastp[0] = pts[nxt[0]]
                 nxt[0] += 1
-        run(length / SPEED, fn)
+        run(length / (SPEED if glue else SPEED * TRAVEL_X), fn)      # valve closed: the nozzle repositions faster
         if glue:
             done_here = sum(1 for st, g_ in P["estart"] if g_ and st < j)
             print(f"PROGRESS glued={PROG_BASE[0] + done_here}/{PROG_TOTAL}", flush=True)
