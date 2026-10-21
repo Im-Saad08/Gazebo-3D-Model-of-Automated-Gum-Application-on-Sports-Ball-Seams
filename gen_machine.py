@@ -7,7 +7,7 @@ RECLAMP = "--reclamp" in sys.argv
 BALL_CATALOG = {
     "football":   {"label": "Football",   "enabled": True,  "sizes": {3: 0.095, 4: 0.103, 5: 0.110}},
     "volleyball": {"label": "Volleyball", "enabled": True,  "sizes": {3: 0.0955, 4: 0.1003, 5: 0.1050}},
-    "basketball": {"label": "Basketball", "enabled": False, "sizes": {}},
+    "basketball": {"label": "Basketball", "enabled": True,  "sizes": {5: 0.1112, 6: 0.1152, 7: 0.1192}},
 }
 if "--list-balls" in sys.argv:        # the panel asks this, so new balls appear there without editing the panel
     print(json.dumps({k: {"label": v["label"], "enabled": v["enabled"], "sizes": sorted(v["sizes"])} for k, v in BALL_CATALOG.items()}))
@@ -243,6 +243,287 @@ def edge_ok(u, v, rot):
     return all(abs(slerp(a, b, t / 8)[0]) <= XMAX for t in range(9))
 
 _I3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+
+def plan_pass_euler(rot, required, label, done=frozenset()):
+    """One continuous trail through the required seams (Chinese-postman): the fewest possible stops, the nozzle keeps
+    going straight through crossings, and it only travels (valve closed, lifted) over seam that is already glued."""
+    import heapq, random
+    allowed = {e for e in edges if edge_ok(units[e[0]], units[e[1]], rot)}
+    assert required <= allowed, f"{label}: {len(required - allowed)} required edges are not reachable"
+    adj = {}
+    for (i, j) in allowed:
+        adj.setdefault(i, []).append(j); adj.setdefault(j, []).append(i)
+    E = lambda a, b: (min(a, b), max(a, b))
+    def cost(a, b):
+        return 1.0 if (E(a, b) in required or E(a, b) in done) else 8.0
+    def dijkstra(src):
+        dist, prev, pq = {src: 0.0}, {src: None}, [(0.0, src)]
+        while pq:
+            d, c = heapq.heappop(pq)
+            if d > dist[c]: continue
+            for n in sorted(adj[c]):
+                nd = d + cost(c, n)
+                if nd < dist.get(n, 1e9) - 1e-9:
+                    dist[n], prev[n] = nd, c
+                    heapq.heappush(pq, (nd, n))
+        return dist, prev
+    deg = {}
+    for a, b in required:
+        deg[a] = deg.get(a, 0) + 1; deg[b] = deg.get(b, 0) + 1
+    odd = sorted(v for v, d in deg.items() if d % 2)
+    D = {v: dijkstra(v) for v in odd}
+    d = lambda a, b: D[a][0].get(b, 1e6)
+    rng = random.Random(7)
+    best, best_c = [], 0.0
+    if odd:
+        best_c = 1e18
+        for trial in range(400):
+            pool = odd[:]
+            if trial: rng.shuffle(pool)
+            pairs = []
+            while pool:
+                a = pool.pop(0)
+                b = min(pool, key=lambda w: (d(a, w), rng.random() if trial else w))
+                pool.remove(b); pairs.append((a, b))
+            improved = True
+            while improved:
+                improved = False
+                for i in range(len(pairs)):
+                    for j in range(i + 1, len(pairs)):
+                        (a, b), (c, e) = pairs[i], pairs[j]
+                        cur = d(a, b) + d(c, e)
+                        for np_ in (((a, c), (b, e)), ((a, e), (b, c))):
+                            if d(*np_[0]) + d(*np_[1]) < cur - 1e-9:
+                                pairs[i], pairs[j] = np_; improved = True; break
+            c = sum(d(a, b) for a, b in pairs)
+            if c < best_c - 1e-9: best, best_c = pairs[:], c
+    multi = {}
+    def add(a, b):
+        multi.setdefault(a, []).append(b); multi.setdefault(b, []).append(a)
+    for a, b in required: add(a, b)
+    for a, b in best:
+        path, c = [], b
+        while c is not None:
+            path.append(c); c = D[a][1][c]
+        for x, y in zip(path[::-1][:-1], path[::-1][1:]): add(x, y)
+    def comps():
+        seen_v, out = set(), []
+        for v0 in list(multi):
+            if v0 in seen_v or not multi[v0]: continue
+            comp, st = set(), [v0]
+            while st:
+                x = st.pop()
+                if x in comp: continue
+                comp.add(x); st.extend(multi[x])
+            seen_v |= comp; out.append(comp)
+        return out
+    while True:
+        cs = comps()
+        if len(cs) < 2: break
+        bestl = None
+        for v in cs[0]:
+            dist, prev = dijkstra(v)
+            for w in set().union(*cs[1:]):
+                if bestl is None or dist[w] < bestl[0]:
+                    bestl = (dist[w], v, w, prev)
+        _, v, w, prev = bestl
+        path, c = [], w
+        while c is not None:
+            path.append(c); c = prev[c]
+        for x, y in zip(path[::-1][:-1], path[::-1][1:]):
+            add(x, y); add(x, y)
+    def dirv(a, b):
+        return norm(tuple(units[b][k] - units[a][k] for k in range(3)))
+    start = min({v for e in required for v in e}, key=lambda v: (abs(matvec(rot, units[v])[0]), v))
+    stack, circ = [start], []
+    while stack:                                   # Hierholzer, always preferring to continue straight on
+        v = stack[-1]
+        if multi.get(v):
+            if len(stack) > 1:
+                din = dirv(stack[-2], v)
+                n = max(sorted(multi[v]), key=lambda m: dot3(din, dirv(v, m)))
+            else:
+                n = sorted(multi[v])[0]
+            multi[v].remove(n); multi[n].remove(v)
+            stack.append(n)
+        else:
+            circ.append(stack.pop())
+    circ = circ[::-1]
+    def tag(circ):
+        seen, glue = set(), []
+        for a, b in zip(circ[:-1], circ[1:]):
+            e = E(a, b)
+            if e in required and e not in seen:
+                seen.add(e); glue.append(True)
+            else:
+                glue.append(False)
+        return glue
+    glue = tag(circ)
+    n = len(glue)
+    best_run, run_len, cut = 0, 0, 0
+    for k in range(2 * n):                         # the circuit is closed: open it at its longest travel stretch
+        if not glue[k % n]:
+            run_len += 1
+            if run_len > best_run: best_run, cut = run_len, (k + 1) % n
+        else:
+            run_len = 0
+    if best_run and any(glue):
+        circ = circ[:-1]; circ = circ[cut:] + circ[:cut]; circ.append(circ[0])
+        glue = tag(circ)
+    while glue and not glue[0]:
+        glue.pop(0); circ.pop(0)
+    while glue and not glue[-1]:
+        glue.pop(); circ.pop()
+    return circ, glue
+
+def spin_range(route, rot):
+    prev, lo, hi = 0.0, 0.0, 0.0
+    for v in route:
+        p = matvec(rot, units[v])
+        s = math.pi / 2 - math.atan2(p[2], p[1])
+        while s - prev > math.pi: s -= 2 * math.pi
+        while s - prev < -math.pi: s += 2 * math.pi
+        prev = s; lo, hi = min(lo, s), max(hi, s)
+    return lo, hi
+
+
+# ---------- basketball: 8 equal panels = tennis-ball-type seam curve + two perpendicular great circles ----------
+BB_A = 0.44                                      # tennis-ball seam shape parameter (Bourke), gives 8 panels of 12.5 % each
+BB_PIECE = 0.15                                  # longest seam piece in radians (about 8.6 degrees)
+
+def _fib_points(n):
+    out = []
+    for i in range(n):
+        z = 1 - 2 * (i + 0.5) / n
+        r = math.sqrt(max(0.0, 1 - z * z)); a = math.pi * (3 - 5 ** 0.5) * i
+        out.append((r * math.cos(a), r * math.sin(a), z))
+    return out
+
+def _rot_to_x(c):
+    d = dot3(c, (1, 0, 0))
+    if d > 1 - 1e-9:
+        return [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    if d < -1 + 1e-9:
+        return rodrigues((0, 0, 1), math.pi)
+    return rodrigues(norm(cross(c, (1, 0, 0))), math.acos(d))
+
+def basketball_geometry():
+    A = BB_A
+    def tp(T):
+        th = math.pi / 2 - (math.pi / 2 - A) * math.cos(T)
+        ph = T / 2 + A * math.sin(2 * T)
+        return (math.sin(th) * math.cos(ph), math.sin(th) * math.sin(ph), math.cos(th))
+    index, pts = {}, []
+    def vid(p):
+        key = tuple(round(c, 6) + 0.0 for c in p)
+        if key not in index:
+            index[key] = len(pts); pts.append(norm(p))
+        return index[key]
+    E_ = set()
+    def link(i, j):
+        E_.add((min(i, j), max(i, j)))
+    def pieces(p, q, n):
+        return [slerp(p, q, k / n) for k in range(n + 1)]
+    # where the tennis curve crosses the two great circles x = 0 and y = 0
+    N = 40000
+    cross_T = []
+    for comp in (0, 1):
+        prev = tp(0.0)[comp]
+        for k in range(1, N + 1):
+            T = 4 * math.pi * k / N
+            cur = tp(T)[comp]
+            if prev == 0.0 or prev * cur < 0:
+                lo, hi = 4 * math.pi * (k - 1) / N, T
+                for _ in range(60):
+                    mid = (lo + hi) / 2
+                    if tp(mid)[comp] * tp(lo)[comp] <= 0: hi = mid
+                    else: lo = mid
+                cross_T.append(((lo + hi) / 2, comp))
+            prev = cur
+    cross_T = sorted(cross_T)
+    snapped = []                                  # crossing points snapped exactly onto their great circle
+    for T, comp in cross_T:
+        p = list(tp(T)); p[comp] = 0.0
+        snapped.append((T, comp, norm(p)))
+    # the tennis curve, cut at every crossing and subdivided into short pieces
+    for k in range(len(snapped)):
+        T0, c0, p0 = snapped[k]
+        if k + 1 < len(snapped):
+            T1, c1, p1 = snapped[k + 1]
+        else:
+            T1, c1, p1 = snapped[0][0] + 4 * math.pi, snapped[0][1], snapped[0][2]
+        n = max(1, int(math.ceil(sum(math.dist(tp(T0 + (T1 - T0) * j / 50), tp(T0 + (T1 - T0) * (j + 1) / 50)) for j in range(50)) / BB_PIECE)))
+        chain = [vid(p0)] + [vid(tp(T0 + (T1 - T0) * j / n)) for j in range(1, n)] + [vid(p1)]
+        for i, j in zip(chain[:-1], chain[1:]):
+            link(i, j)
+    # the two great circles: x = 0 and y = 0, cut at the poles and at the tennis crossings
+    for comp in (0, 1):
+        on = [(math.atan2(p[2], p[1 - comp]), p) for T, c, p in snapped if c == comp]
+        on += [(math.pi / 2, (0.0, 0.0, 1.0)), (-math.pi / 2, (0.0, 0.0, -1.0))]
+        on.sort(key=lambda t: t[0])
+        for k in range(len(on)):
+            p, q = on[k][1], on[(k + 1) % len(on)][1]
+            n = max(1, int(math.ceil(math.acos(max(-1.0, min(1.0, dot3(p, q)))) / BB_PIECE)))
+            ch = [vid(p)] + [vid(r) for r in pieces(p, q, n)[1:-1]] + [vid(q)]
+            for i, j in zip(ch[:-1], ch[1:]):
+                link(i, j)
+    return pts, sorted(E_)
+
+if BALL_TYPE == "basketball":
+    units0b, edges = basketball_geometry()
+    _fib = _fib_points(400)
+    _all = {(min(i, j), max(i, j)) for i, j in edges}
+    _scored = []
+    for _f in _fib:
+        _Rf = _rot_to_x(_f)
+        _un = [matvec(_Rf, u) for u in units0b]
+        _lf = [e for e in edges if not edge_ok(_un[e[0]], _un[e[1]], _I3)]
+        _scored.append((len(_lf), _f))
+    _scored.sort(key=lambda t: (t[0], t[1]))
+    _short = [t for t in _scored if t[0] <= _scored[0][0] + 10][::5][:24]    # spread-out shortlist of good grips
+    _best_pair = None
+    for _cnt, _f in _short:
+        _Rf = _rot_to_x(_f)
+        units = [matvec(_Rf, u) for u in units0b]
+        _r1 = {(min(i, j), max(i, j)) for i, j in edges if edge_ok(units[i], units[j], _I3)}
+        _lf = _all - _r1
+        try:
+            _rt, _gm = plan_pass_euler(_I3, set(_r1), "t1")
+        except Exception:
+            continue
+        _lo, _hi = spin_range(_rt, _I3)
+        _s1 = max(abs(_lo), abs(_hi))
+        if _s1 > 10.5:
+            continue
+        _feas = []
+        for _d in _fib[:300]:
+            _c2 = matvec(_Rf, _d)
+            if abs(dot3(_c2, (1, 0, 0))) > 0.5:
+                continue
+            _R2 = _rot_to_x(_c2)
+            if all(edge_ok(units[e[0]], units[e[1]], _R2) for e in _lf):
+                _feas.append((_d, _R2))
+        for _d, _R2 in _feas[::max(1, len(_feas) // 4)][:4]:
+            if _lf:
+                try:
+                    _rt2, _gm2 = plan_pass_euler(_R2, set(_lf), "t2", set(_r1))
+                except Exception:
+                    continue
+                _lo2, _hi2 = spin_range(_rt2, _R2)
+                _s2 = max(abs(_lo2), abs(_hi2))
+            else:
+                _s2 = 0.0
+            if _s2 > 10.5:
+                continue
+            _cost = (sum(1 for g_ in _gm if not g_) + (sum(1 for g_ in _gm2 if not g_) if _lf else 0)) + 3 * (_s1 + _s2)
+            if _best_pair is None or _cost < _best_pair[0]:
+                _best_pair = (_cost, _f, _d, len(_lf), _s1, _s2)
+    assert _best_pair, "basketball: no pair of grips finishes every seam within the cup spin range"
+    _cost, _f, _d, _nl, _s1, _s2 = _best_pair
+    R0 = _rot_to_x(_f)
+    units = [matvec(R0, u) for u in units0b]
+    _BB_SECOND = _d
+    print(f"basketball: cups grip axis {tuple(round(t, 3) for t in _f)}; {_nl} seams left for the re-clamp; cup spin {_s1:.1f} / {_s2:.1f} rad")
 _reach1 = {e for e in edges if edge_ok(units[e[0]], units[e[1]], _I3)}
 _left = set(edges) - _reach1
 _cands = []
@@ -256,6 +537,8 @@ for _s1 in (1, -1):
         _w = (0.0, _s1 / _phi, _s2 * _phi)
         for _p in (_w, (_w[1], _w[2], _w[0]), (_w[2], _w[0], _w[1])):
             _cands.append(("hexagon", _p))
+if BALL_TYPE == "basketball":
+    _cands = [("axis", _BB_SECOND)]               # the second grip axis found (and checked) by the search above
 if BALL_TYPE == "volleyball":                     # re-clamp onto another group centre (a face of the cube)
     _cands = [("group", (0.0, 1.0, 0.0)), ("group", (0.0, 0.0, 1.0)), ("group", (0.0, -1.0, 0.0)), ("group", (0.0, 0.0, -1.0))]
 _best = None
@@ -275,11 +558,11 @@ CLAMP_AXIS = norm(cross(_B, (1, 0, 0)))
 CLAMP_ROT = rodrigues(CLAMP_AXIS, CLAMP_ANGLE)       # maps the 2nd clamp axis onto the cup axis
 
 R = BALL_R / S       # ball radius in pre-scale drawing units
-SEG = 3
 seam_vis = []
 k = 0
 for (i, j) in edges:
     a, b = units[i], units[j]
+    SEG = 3 if BALL_TYPE == "football" else max(1, int(math.ceil(math.acos(max(-1.0, min(1.0, dot3(a, b)))) / 0.14)))   # football keeps its tested model
     for s in range(SEG):
         p0 = slerp(a, b, s / SEG)
         p1 = slerp(a, b, (s + 1) / SEG)
@@ -324,6 +607,7 @@ PALETTE = [
     ("patch_black", "0.04 0.04 0.05 1"),
     ("vb_yellow", "0.97 0.80 0.10 1"),
     ("vb_blue", "0.10 0.30 0.70 1"),
+    ("bb_orange", "0.88 0.42 0.10 1"),
     ("seam_black", "0.12 0.12 0.13 1"),
     # electrics
     ("enclosure_grey", "0.80 0.81 0.80 1"),    # RAL 7035 light grey
@@ -685,7 +969,7 @@ if not NO_MESH and BALL_TYPE == "volleyball":
         print(f"volleyball {_strip} panels: {len(_tris)} triangles -> {_stl}")
         patch_vis += (f'    <visual name="panels_{_strip}"><geometry><mesh filename="file://$(find football_gumming_sim)'
                       f'/meshes/ball_panels_{_strip}.stl" scale="1 1 1"/></geometry><material name="{_mat}"/></visual>\n')
-elif not NO_MESH:
+elif not NO_MESH and BALL_TYPE == "football":
     meshdir = urdf.parent.parent / "meshes"
     meshdir.mkdir(parents=True, exist_ok=True)
     stl = meshdir / "ball_pentagons.stl"
@@ -698,7 +982,7 @@ elif not NO_MESH:
 x += f'''
   <link name="football">
     <inertial><mass value="0.43"/><inertia ixx="0.008" ixy="0" ixz="0" iyy="0.008" iyz="0" izz="0.008"/></inertial>
-    <visual name="ball"><geometry><sphere radius="{R:.5f}"/></geometry><material name="football_white"/></visual>
+    <visual name="ball"><geometry><sphere radius="{R:.5f}"/></geometry><material name="{"bb_orange" if BALL_TYPE == "basketball" else "football_white"}"/></visual>
     <collision><geometry><sphere radius="{R:.5f}"/></geometry></collision>
 {patch_vis}{"".join(seam_vis)}{"".join(guide)}  </link>''' + football_mount()
 
@@ -892,15 +1176,16 @@ def spin_range(route, rot):
 
 all_edges = {(min(i, j), max(i, j)) for i, j in edges}
 reach1 = {e for e in edges if edge_ok(units[e[0]], units[e[1]], I3)}
-_n1, _n2 = (("Clamp 1: cups on the two end panel groups", "Clamp 2: re-clamp onto the side panel groups") if BALL_TYPE == "volleyball"
-            else ("Clamp 1: cups on pentagon pair A", "Clamp 2: re-clamp onto hexagon pair"))
+_n1, _n2 = ({"volleyball": ("Clamp 1: cups on the two end panel groups", "Clamp 2: re-clamp onto the side panel groups"),
+             "basketball": ("Clamp 1: cups on two opposite panels", "Clamp 2: re-clamp onto two other panels")}
+            .get(BALL_TYPE, ("Clamp 1: cups on pentagon pair A", "Clamp 2: re-clamp onto hexagon pair")))
 passes_def = [(_n1, I3, reach1, 0.0)]
-if RECLAMP:
+if RECLAMP and (all_edges - reach1):
     passes_def.append((_n2, CLAMP_ROT, all_edges - reach1, CLAMP_ANGLE))
 
 out_passes, covered = [], {}
 for label, rot, req, ang in passes_def:
-    route, gum = plan_pass(rot, set(req), label, set(covered))
+    route, gum = (plan_pass_euler if BALL_TYPE == "basketball" else plan_pass)(rot, set(req), label, set(covered))
     lo, hi = spin_range(route, rot)
     glued = [(min(a, b), max(a, b)) for a, b, g in zip(route[:-1], route[1:], gum) if g]
     for e in glued:
