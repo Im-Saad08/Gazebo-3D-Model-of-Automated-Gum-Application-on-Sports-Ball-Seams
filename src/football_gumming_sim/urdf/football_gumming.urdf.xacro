@@ -176,18 +176,17 @@
     <visual name="door_hinge_0.3"><origin xyz="0.69 -0.015 0.55" rpy="0 0 0"/><geometry><cylinder radius="0.006" length="0.045"/></geometry><material name="rail_silver"/></visual>
     <visual name="door_hinge_0.0"><origin xyz="0.69 -0.015 0.4" rpy="0 0 0"/><geometry><cylinder radius="0.006" length="0.045"/></geometry><material name="rail_silver"/></visual>
     <visual name="door_hinge_-0.3"><origin xyz="0.69 -0.015 0.25" rpy="0 0 0"/><geometry><cylinder radius="0.006" length="0.045"/></geometry><material name="rail_silver"/></visual>
-    <visual name="strip_base"><origin xyz="0.515 -0.03 0.606" rpy="0 0 0"/><geometry><box size="0.35 0.07 0.015"/></geometry><material name="enclosure_grey"/></visual>
-    <visual name="ctrl_strip"><origin xyz="0.515 -0.045 0.6175" rpy="0.45 0 0"/><geometry><box size="0.35 0.085 0.01"/></geometry><material name="motor_dark"/></visual>
-    <visual name="estop_yellow_ring"><origin xyz="0.625 -0.04848 0.624705" rpy="0.45 0 0"/><geometry><cylinder radius="0.035" length="0.006"/></geometry><material name="safety_yellow"/></visual>
-    <visual name="estop_button"><origin xyz="0.625 -0.0537 0.63551" rpy="0.45 0 0"/><geometry><cylinder radius="0.0225" length="0.015"/></geometry><material name="red_btn"/></visual>
-    <visual name="btn_start"><origin xyz="0.405 -0.04935 0.626505" rpy="0.45 0 0"/><geometry><cylinder radius="0.013" length="0.01"/></geometry><material name="green_led"/></visual>
-    <visual name="btn_stop"><origin xyz="0.445 -0.04935 0.626505" rpy="0.45 0 0"/><geometry><cylinder radius="0.013" length="0.01"/></geometry><material name="red_btn"/></visual>
-    <visual name="btn_reset"><origin xyz="0.485 -0.04935 0.626505" rpy="0.45 0 0"/><geometry><cylinder radius="0.013" length="0.01"/></geometry><material name="cabinet_blue"/></visual>
-    <visual name="key_switch"><origin xyz="0.545 -0.04935 0.626505" rpy="0.45 0 0"/><geometry><cylinder radius="0.015" length="0.0125"/></geometry><material name="rubber_black"/></visual>
-    <visual name="beacon_base"><origin xyz="0.38 0.085 0.615" rpy="0 0 0"/><geometry><cylinder radius="0.01" length="0.03"/></geometry><material name="motor_dark"/></visual>
-    <visual name="beacon_light_0"><origin xyz="0.38 0.085 0.6425" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="red_btn"/></visual>
-    <visual name="beacon_light_1"><origin xyz="0.38 0.085 0.6675" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="nozzle_orange"/></visual>
-    <visual name="beacon_light_2"><origin xyz="0.38 0.085 0.6925" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="green_led"/></visual>
+    <visual name="ctrl_deck"><origin xyz="0.515 0.035 0.605" rpy="0 0 0"/><geometry><box size="0.35 0.1 0.01"/></geometry><material name="motor_dark"/></visual>
+    <visual name="estop_yellow_ring"><origin xyz="0.625 0.035 0.613" rpy="0 0 0"/><geometry><cylinder radius="0.035" length="0.006"/></geometry><material name="safety_yellow"/></visual>
+    <visual name="estop_button"><origin xyz="0.625 0.035 0.6235" rpy="0 0 0"/><geometry><cylinder radius="0.0225" length="0.015"/></geometry><material name="red_btn"/></visual>
+    <visual name="btn_start"><origin xyz="0.405 0.035 0.615" rpy="0 0 0"/><geometry><cylinder radius="0.013" length="0.01"/></geometry><material name="green_led"/></visual>
+    <visual name="btn_stop"><origin xyz="0.445 0.035 0.615" rpy="0 0 0"/><geometry><cylinder radius="0.013" length="0.01"/></geometry><material name="red_btn"/></visual>
+    <visual name="btn_reset"><origin xyz="0.485 0.035 0.615" rpy="0 0 0"/><geometry><cylinder radius="0.013" length="0.01"/></geometry><material name="cabinet_blue"/></visual>
+    <visual name="key_switch"><origin xyz="0.545 0.035 0.61625" rpy="0 0 0"/><geometry><cylinder radius="0.015" length="0.0125"/></geometry><material name="rubber_black"/></visual>
+    <visual name="beacon_base"><origin xyz="0.38 0.125 0.615" rpy="0 0 0"/><geometry><cylinder radius="0.01" length="0.03"/></geometry><material name="motor_dark"/></visual>
+    <visual name="beacon_light_0"><origin xyz="0.38 0.125 0.6425" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="red_btn"/></visual>
+    <visual name="beacon_light_1"><origin xyz="0.38 0.125 0.6675" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="nozzle_orange"/></visual>
+    <visual name="beacon_light_2"><origin xyz="0.38 0.125 0.6925" rpy="0 0 0"/><geometry><cylinder radius="0.014" length="0.025"/></geometry><material name="green_led"/></visual>
     <visual name="drip_tray_floor"><origin xyz="0 0.025 0.1625" rpy="0 0 0"/><geometry><box size="0.25 0.2 0.005"/></geometry><material name="stainless"/></visual>
     <visual name="drip_tray_front"><origin xyz="0 -0.0725 0.175" rpy="0 0 0"/><geometry><box size="0.25 0.005 0.025"/></geometry><material name="stainless"/></visual>
     <visual name="drip_tray_back"><origin xyz="0 0.1225 0.175" rpy="0 0 0"/><geometry><box size="0.25 0.005 0.025"/></geometry><material name="stainless"/></visual>

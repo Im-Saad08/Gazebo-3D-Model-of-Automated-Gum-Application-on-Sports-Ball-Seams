@@ -1,59 +1,27 @@
 
---- full ---
+--- short ---
 Simulation speed -> time scale 1.0
-Clamp 1: cups on two opposite panels: 2.64 m of nozzle travel, about 66 s
-Clamp 2: re-clamp onto two other panels: 0.82 m of nozzle travel, about 20 s
+Clamp 1: cups on two opposite panels: 0.19 m of nozzle travel, about 5 s
 Gum: ready (old gum cleared)
-PROGRESS glued=0/164
+PROGRESS glued=0/11
 Settings: nozzle 40 mm/s, lift 20 mm, lift/lower 0.6 s + 0.5 s hold, time scale 1.0
 Home
 Clamp 1: cups on two opposite panels: position ball so the first seam point is under the nozzle
 Position ball
 Lower nozzle to working gap
 Tracing seams: nozzle touches only unglued seams, lifts while travelling over glued ones
-PROGRESS glued=1/164
+PROGRESS glued=1/11
   nozzle UP: crossing glued seam
   nozzle DOWN onto unglued seam
-PROGRESS glued=12/164
-  nozzle UP: crossing glued seam
-  nozzle DOWN onto unglued seam
-PROGRESS glued=21/164
-  nozzle UP: crossing glued seam
-  nozzle DOWN onto unglued seam
-PROGRESS glued=47/164
-  nozzle UP: crossing glued seam
-  nozzle DOWN onto unglued seam
-PROGRESS glued=55/164
-  nozzle UP: crossing glued seam
-  nozzle DOWN onto unglued seam
-PROGRESS glued=139/164
-PASS 1 of 2 finished: 139 of 164 seam edges glued. The other 25 edges are hidden under and around the cups; they are glued after the re-clamp.
-Z TRACKING (Clamp 1: cups on two opposite panels): commanded lift 20 mm, nozzle actually rose 20.0 mm (100%)  [5 lifts]
-Raise nozzle
-Return cups to centre
-RE-CLAMP: release the ball, turn it 87 deg, grip the other panel pair
-Clamp 2: re-clamp onto two other panels: position ball so the first seam point is under the nozzle
-Position ball
-Lower nozzle to working gap
-Tracing seams: nozzle touches only unglued seams, lifts while travelling over glued ones
-PROGRESS glued=141/164
-  nozzle UP: crossing glued seam
-  nozzle DOWN onto unglued seam
-PROGRESS glued=149/164
-  nozzle UP: crossing glued seam
-  nozzle DOWN onto unglued seam
-PROGRESS glued=159/164
-  nozzle UP: crossing glued seam
-  nozzle DOWN onto unglued seam
-PROGRESS glued=164/164
-PASS 2 of 2 finished: 164 of 164 seam edges glued.
-Z TRACKING (Clamp 2: re-clamp onto two other panels): commanded lift 20 mm, nozzle actually rose 20.0 mm (100%)  [3 lifts]
-Gum: 476 glue line markers delivered in 80 requests (slowest 1.3 s, 0 failed/retried, 1 beads still queued when the nozzle finished, nozzle waited 0 s for Gazebo)
-Gum: final refresh of all 476 beads done
+PROGRESS glued=11/11
+PASS 1 of 1 finished: 139 of 164 seam edges glued.
+Z TRACKING: no usable /joint_states data (is joint_state_broadcaster running?)
+Gum: 34 glue line markers delivered in 7 requests (slowest 0.7 s, 0 failed/retried, 6 beads still queued when the nozzle finished, nozzle waited 0 s for Gazebo)
+Gum: final refresh of all 34 beads done
 Raise nozzle
 Return home
 Release ball back to start position
-Cycle time: 146 s (2.4 min) at normal speed for ball size 5  (manual: about 5 min per ball)
+Cycle time: 34 s (0.6 min) at normal speed for ball size 5  (manual: about 5 min per ball)
 Record saved: /home/pc/FYP_ball_gum/records/runs.csv
 Done  (remove the gum with:  python3 seam_gum_sequence.py --clear)
 

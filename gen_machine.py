@@ -709,24 +709,24 @@ base_extra += vbox("door_handle", dp(-0.30, -0.035, -0.05), _v3(0.035, 0.03, 0.2
 base_extra += vcyl("door_latch", dp(-0.30, -0.022, -0.26), 0.02, 0.02, "rubber_black", _dcrpy)
 for _w in (0.30, 0.0, -0.30):
     base_extra += vcyl(f"door_hinge_{_w}", dp(0.35, 0.0, _w), 0.012, 0.09, "rail_silver")
-# slanted operator control strip on top front: outside the frame envelope, at hand height
-_TH = 0.45
-_scx, _scy, _scz = cx, yf - 0.06, cz + CAB_H / 2 + 0.035
-def strip(u, v, w):
-    return _v3(_scx + u, _scy + v * math.cos(_TH) - w * math.sin(_TH), _scz + v * math.sin(_TH) + w * math.cos(_TH))
-_srpy = f"{_TH} 0 0"
-base_extra += vbox("strip_base", _v3(cx, _scy + 0.03, cz + CAB_H / 2 + 0.012), _v3(CAB_W, 0.14, 0.03), "enclosure_grey")
-base_extra += vbox("ctrl_strip", strip(0, 0, 0), _v3(CAB_W, 0.17, 0.02), "motor_dark", _srpy)
-base_extra += vcyl("estop_yellow_ring", strip(0.22, 0.0, 0.016), 0.07, 0.012, "safety_yellow", _srpy)
-base_extra += vcyl("estop_button", strip(0.22, 0.0, 0.040), 0.045, 0.03, "red_btn", _srpy)
-base_extra += vcyl("btn_start", strip(-0.22, 0.0, 0.02), 0.026, 0.02, "green_led", _srpy)
-base_extra += vcyl("btn_stop", strip(-0.14, 0.0, 0.02), 0.026, 0.02, "red_btn", _srpy)
-base_extra += vcyl("btn_reset", strip(-0.06, 0.0, 0.02), 0.026, 0.02, "cabinet_blue", _srpy)
-base_extra += vcyl("key_switch", strip(0.06, 0.0, 0.02), 0.03, 0.025, "rubber_black", _srpy)
-# status beacon tower on the cabinet roof
-base_extra += vcyl("beacon_base", _v3(cx - 0.27, cy, cz + CAB_H / 2 + 0.03), 0.02, 0.06, "motor_dark")
+# flat operator control deck: sits directly on the cabinet roof, inside the cabinet footprint (no tilt, no overhang)
+_roof = cz + CAB_H / 2                      # top surface of the cabinet roof
+_DK = 0.02                                  # deck thickness (10 mm)
+_dcx, _dcy = cx, yf + 0.10                  # deck centre: front half of the roof
+def strip(u, v, h):                         # point on the deck: u across, v toward the back, h = height above the deck surface
+    return _v3(_dcx + u, _dcy + v, _roof + _DK + h)
+_srpy = "0 0 0"
+base_extra += vbox("ctrl_deck", _v3(_dcx, _dcy, _roof + _DK / 2), _v3(CAB_W, 0.20, _DK), "motor_dark")
+base_extra += vcyl("estop_yellow_ring", strip(0.22, 0.0, 0.006), 0.07, 0.012, "safety_yellow", _srpy)
+base_extra += vcyl("estop_button", strip(0.22, 0.0, 0.027), 0.045, 0.03, "red_btn", _srpy)
+base_extra += vcyl("btn_start", strip(-0.22, 0.0, 0.01), 0.026, 0.02, "green_led", _srpy)
+base_extra += vcyl("btn_stop", strip(-0.14, 0.0, 0.01), 0.026, 0.02, "red_btn", _srpy)
+base_extra += vcyl("btn_reset", strip(-0.06, 0.0, 0.01), 0.026, 0.02, "cabinet_blue", _srpy)
+base_extra += vcyl("key_switch", strip(0.06, 0.0, 0.0125), 0.03, 0.025, "rubber_black", _srpy)
+# status beacon tower on the cabinet roof (rear half, clear of the control deck)
+base_extra += vcyl("beacon_base", _v3(cx - 0.27, cy + 0.08, _roof + 0.03), 0.02, 0.06, "motor_dark")
 for _k, (_m, _z) in enumerate((("red_btn", 0.085), ("nozzle_orange", 0.135), ("green_led", 0.185))):
-    base_extra += vcyl(f"beacon_light_{_k}", _v3(cx - 0.27, cy, cz + CAB_H / 2 + _z), 0.028, 0.05, _m)
+    base_extra += vcyl(f"beacon_light_{_k}", _v3(cx - 0.27, cy + 0.08, _roof + _z), 0.028, 0.05, _m)
 # drip tray under the ball (catches any drip that runs off the ball)
 base_extra += vbox("drip_tray_floor", "0 0.05 0.325", "0.50 0.40 0.01", "stainless")
 base_extra += vbox("drip_tray_front", "0 -0.145 0.35", "0.50 0.01 0.05", "stainless")
